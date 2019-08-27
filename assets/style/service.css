@@ -1,0 +1,58 @@
+	/* 特色服务列表 */
+	.proLis{padding: 20rpx 4%;flex-wrap: wrap;}
+	.proLis .item-lis{ width: 330rpx; height: 350rpx; overflow: hidden;box-shadow: 0 0 10rpx rgba(0,0,0,0.1);background: #fff;margin: 15rpx 0; position: relative;}
+	.proLis .item-lis .img{width: 100%;height: 220rpx;display: block;margin: 0 auto;}
+	.proLis .item-lis .tit{ font-size: 30rpx; padding: 24rpx 4% 15rpx 4%; line-height: 32rpx;}
+	.proLis .item-lis .price{font-size: 32rpx;padding: 0 4%; color: #ff3b3b;}
+	.proLis .item-lis .price:before{content: "￥"; font-size: 26rpx;margin-right:4rpx;}
+	.freeVip{ position: absolute;  top: 20rpx; left: 0;width: 120rpx; height: 40rpx; background: #fdc125; color: #fff; font-size: 22rpx; text-align: center; line-height: 40rpx; border-radius: 0 30rpx 30rpx 0;}
+	
+	/* 服务详情 */
+		.Detai_BfixBox{height: 110rpx;padding: 0 4%; display: flex; justify-content: flex-end; align-items: center; font-size: 28rpx; position: fixed;bottom: 0;left: 0; width: 100%; box-sizing: border-box; box-shadow: 0 -2rpx 6rpx rgba(0,0,0,0.1);}
+	.Detai_BfixBox .price{ font-size: 32rpx; margin-right: 20rpx;}
+	.Detai_BfixBox .Rbtn{ width: 200rpx;  height: 70rpx; text-align: center;background: #537DEB; color: #fff; line-height: 70rpx;border-radius: 40rpx; }	
+	
+	.seviseDetaCont1{ display: flex; flex-direction: column;}
+	.seviseDetaCont1 .item{border: 2rpx solid #e7e7e7;
+	border-radius: 10rpx;
+	padding: 20rpx 80rpx 20rpx 20rpx;
+	font-size: 24rpx;
+	color: #666;
+	line-height: 40rpx;
+	background: #F9F9F9;
+	margin-top: 40rpx;
+	position: relative;
+	}
+	.seviseDetaCont1 .price{
+		color: red;
+		font-size: 26rpx;
+	}
+	.seviseDetaCont1 .icon{
+		position: absolute;
+		right: 20rpx;
+		top: 50%;
+		transform: translateY(-50%);
+		width:36rpx ;
+		height: 36rpx;
+	}
+	.seviseDetaCont2 .tit{ font-size: 28rpx; font-weight: bold;padding: 30rpx 0 10rpx; color: #333;}
+	.seviseDetaCont2 view{ font-size: 28rpx; line-height: 48rpx; padding-bottom: 20rpx;color: #666;}
+	.seviseDetaCont2 view image{ width: 100%; display: block;margin: 10rpx auto;}
+	.seviseDetalNav{ border-bottom: 2rpx solid #e7e7e7;}
+	.seviseDetalNav view{ width: 50%; text-align: center; font-size: 28rpx; line-height: 80rpx;}
+	.seviseDetalNav view.on{ color: #537DEB; position: relative;}
+	.seviseDetalNav view.on::after{content: ""; position: absolute;bottom: 0;left: 50%;transform: translateX(-50%); width: 120rpx; height: 6rpx; background: #537DEB;}
+	
+	.seviseDetalTop .tit{ font-size: 28rpx;padding: 20rpx 0; font-weight: bold;}
+	.seviseDetalTop .text2{ font-size: 24rpx; line-height: 40rpx; color: #666;padding-bottom: 20rpx;}
+	
+	.seviseDetaCont2 .dataiBigtit {
+		padding: 40rpx 0 20rpx 0;
+		line-height: 40rpx;
+		font-size: 30rpx;
+		font-weight: bold;
+		text-align: center;
+		color: #333;
+	}
+	
+	

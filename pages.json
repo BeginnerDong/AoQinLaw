@@ -1,0 +1,194 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "澳秦法律",//设置页面标题文字
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/serviceList/serviceList",
+			"style": {
+				"navigationBarTitleText": "特色服务",//设置页面标题文字
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/serviceDetails/serviceDetails",
+			"style": {
+				"navigationBarTitleText": "服务详情",//设置页面标题文字
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/user/user",
+			"style": {
+				"navigationBarTitleText": "我的",//设置页面标题文字
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/caseSubmit/caseSubmit",
+			"style": {
+				"navigationBarTitleText": "案例提交",//设置页面标题文字
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/purchase/purchase",
+			"style": {
+				"navigationBarTitleText": "立即下单",//设置页面标题文字
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/VIPservice/VIPservice",
+			"style": {
+				"navigationBarTitleText": "会员服务",//设置页面标题文字
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/legalAdvice/legalAdvice",
+			"style": {
+				"navigationBarTitleText": "法律咨询",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/generalAgent/generalAgent",
+			"style": {
+				"navigationBarTitleText": "普通代理",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/companyProfile/companyProfile",
+			"style": {
+				"navigationBarTitleText": "公司简介",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/contactUs/contactUs",
+			"style": {
+				"navigationBarTitleText": "联系我们",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/lawyerList/lawyerList",
+			"style": {
+				"navigationBarTitleText": "律师",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/lawyerDetail/lawyerDetail",
+			"style": {
+				"navigationBarTitleText": "律师详情",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/lawyerCard/lawyerCard",
+			"style": {
+				"navigationBarTitleText": "律师名片",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myMessage/myMessage",
+			"style": {
+				"navigationBarTitleText": "我的信息",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myVIP/myVIP",
+			"style": {
+				"navigationBarTitleText": "我的会员",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myConsult/myConsult",
+			"style": {
+				"navigationBarTitleText": "我的咨询",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/feedback/feedback",
+			"style": {
+				"navigationBarTitleText": "意见反馈",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myOrder/myOrder",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myCase/myCase",
+			"style": {
+				"navigationBarTitleText": "我的案件",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myCaseDetail/myCaseDetail",
+			"style": {
+				"navigationBarTitleText": "案件详情",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myCasePjDetail/myCasePjDetail",
+			"style": {
+				"navigationBarTitleText": "评价律师",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myTeam/myTeam",
+			"style": {
+				"navigationBarTitleText": "我的团队",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/myCashOut/myCashOut",
+			"style": {
+				"navigationBarTitleText": "提现",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/addBankCard/addBankCard",
+			"style": {
+				"navigationBarTitleText": "添加银行卡",
+				"onReachBottomDistance":100
+			}
+		}
+		
+    ],
+	"globalStyle": {
+		//"navigationStyle":"custom",
+		"navigationBarTextStyle": "white",//导航栏文字蓝色
+		"navigationBarTitleText": "澳秦法律",
+		"navigationBarBackgroundColor": "#537deb"
+	},
+	"condition": { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [{
+			"name": "", //模式名称
+			"path": "", //启动页面，必选
+			"query": "" //启动参数，在页面的onLoad函数里面得到
+		}]
+	}
+}

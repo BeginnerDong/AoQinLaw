@@ -1,0 +1,143 @@
+<template>
+	<view>
+
+		<view class="userHead">
+			<view class="flexRowBetween">
+				<view class="left">
+					<image class="photo" src="../../static/images/about-img1.png" mode=""></image>
+					快乐的猫
+				</view>
+				<view class="rr" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myMessage/myMessage'}})">我的信息 &gt;</view>
+			</view>
+		</view>
+		
+		<view class="userBox2 boxShaow">
+			<view class="flexRowBetween tit">
+				<view>我的订单</view>
+				<view class="more" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myOrder/myOrder'}})">全部订单 &gt;</view>
+			</view>
+			<view class="menu flexRowBetween">
+				<view class="child" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myOrder/myOrder'}})">
+					<image src="../../static/images/about-icon1.png"></image>
+					<view>未支付</view>
+				</view>
+				<view class="child" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myOrder/myOrder'}})">
+					<image src="../../static/images/about-icon2.png"></image>
+					<view>已支付</view>
+				</view>
+				<view class="child" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myOrder/myOrder'}})">
+					<image src="../../static/images/about-icon3.png"></image>
+					<view>以完成</view>
+				</view>
+			</view>
+		</view>
+		
+		<view class="XlineNav">
+			<view class="info bg1"  @click="webSelf.$Router.navigateTo({route:{path:'/pages/myVIP/myVIP'}})">
+				<view class="ilblock listimg">
+					<image src="../../static/images/about-icon4.png"></image>
+				</view>
+				<view class="ilblock">我的会员</view>
+				<image class="arrow" src="../../static/images/arrow-icon1.png" ></image>
+			</view>
+			<view class="info bg1" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myConsult/myConsult'}})">
+				<view class="ilblock listimg">
+					<image src="../../static/images/about-icon5.png"></image>
+				</view>
+				<view class="ilblock">我的咨询</view>
+				<image class="arrow" src="../../static/images/arrow-icon1.png" ></image>
+			</view>
+			<view class="info bg1" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myCase/myCase'}})">
+				<view class="ilblock listimg">
+					<image src="../../static/images/about-icon6.png"></image>
+				</view>
+				<view class="ilblock">我的案件</view>
+				<image class="arrow" src="../../static/images/arrow-icon1.png" ></image>
+			</view>
+			<view class="info bg1" @click="webSelf.$Router.navigateTo({route:{path:'/pages/feedback/feedback'}})">
+				<view class="ilblock listimg">
+					<image src="../../static/images/about-icon7.png"></image>
+				</view>
+				<view class="ilblock">意见反馈</view>
+				<image class="arrow" src="../../static/images/arrow-icon1.png" ></image>
+			</view>
+			<view class="info bg1" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myTeam/myTeam'}})">
+				<view class="ilblock listimg">
+					<image src="../../static/images/about-icon8.png"></image>
+				</view>
+				<view class="ilblock">我的团队</view>
+				<image class="arrow" src="../../static/images/arrow-icon1.png" ></image>
+			</view>
+		</view>
+
+		<!--底部tab键-->
+		<view class="navbar">
+			<view class="navbar_item" @click="webSelf.$Router.redirectTo({route:{path:'/pages/index/index'}})">
+				<view class="nav_img">
+					<image src="../../static/images/nabar1.png" />
+				</view>
+				<view class="text">小法宝</view>
+			</view>
+			<view class="navbar_item"  @click="webSelf.$Router.redirectTo({route:{path:'/pages/caseSubmit/caseSubmit'}})">
+				<view class="nav_img">
+					<image src="../../static/images/nabar2.png" />
+				</view>
+				<view class="text">案件提交</view>
+			</view>
+			<view class="navbar_item" @click="webSelf.$Router.redirectTo({route:{path:'/pages/user/user'}})">
+				<view class="nav_img">
+					<image src="../../static/images/nabar3-a.png" />
+				</view>
+				<view class="text this-text">我的</view>
+			</view>
+		</view>
+		<!--底部tab键 end-->
+		
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				webSelf: this,
+				showView: false,
+				score:'',
+				wx_info:{}
+			}
+		},
+		onLoad() {
+			const self = this;
+			//self.$Utils.loadAll(['getMainData'], self);
+		},
+		methods: {
+
+			getMainData() {
+				const self = this;
+				console.log('852369')
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+
+				const callback = (res) => {
+					if (res.solely_code == 100000 && res.info.data[0]) {
+						self.mainData = res.info.data;
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getMainData');
+
+				};
+				self.$apis.orderGet(postData, callback);
+
+			},
+
+		},
+	};
+</script>
+
+<style>
+	@import "../../assets/style/common.css";
+	@import "../../assets/style/user.css";
+	
+
+</style>
