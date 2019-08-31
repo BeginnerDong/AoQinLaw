@@ -188,6 +188,13 @@
 				"navigationBarTitleText": "资讯详情",
 				"onReachBottomDistance":100
 			}
+		},
+		{
+			"path": "pages/myVIPcard/myVIPcard",
+			"style": {
+				"navigationBarTitleText": "我的会员",
+				"onReachBottomDistance":100
+			}
 		}
 		
     ],

@@ -1,27 +1,42 @@
 <template>
 	<view>
-		<!-- banner -->
-		<view class="banner-box">
-			<view class="banner">
-				<swiper class="swiper-box" @change="changeIndex" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" indicator-active-color="#537deb" indicator-color="#dbdbdb">
-					<block v-for="(item,index) in mainData" :key="index">
-						<swiper-item class="swiper-item">
-							<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" class="slide-image" />
-						</swiper-item>
-					</block>
-				</swiper>
-			</view>
+		<view class="vipCard">
+			<image src="../../static/images/vip-img1.png" mode=""></image>
 		</view>
 		
 		<view class="msg pdlr4">
 			<view class="tit">服务说明</view>
-			<view class="content ql-editor" v-html="mainData[currentIndex].content">
+			<view class="content ql-editor">
+				<view>1、内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
+				<view>2、内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
+				<view>3、内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
+			</view>
+		</view>
+		<view class="f5H10"></view>
+		<view class="pdlr4 seviceNum">
+			<view class="tit">已使用服务次数</view>
+			<view class="lis flexRowBetween">
+				<view class="">会员咨询</view>
+				<view class="nmb">8次</view>
+			</view>
+			<view class="lis flexRowBetween">
+				<view class="">撰写合同</view>
+				<view class="nmb">8次</view>
+			</view>
+			<view class="lis flexRowBetween">
+				<view class="">民事诉讼</view>
+				<view class="nmb">8次</view>
+			</view>
+			<view class="lis flexRowBetween">
+				<view class="">标准化催收服务</view>
+				<view class="nmb">8次</view>
 			</view>
 		</view>
 		
 		<view class="submitbtn" style="margin: 100rpx auto 0 auto">
 			<button type="submit" @click="Utils.stopMultiClick(submit)">立即购买</button>
 		</view>
+
 
 	</view>
 </template>
@@ -161,10 +176,9 @@
 
 <style>
 	@import "../../assets/style/common.css";
-	@import "../../assets/style/index.css";
 
-	.swiper-box{ height: 400rpx; width: 100%; margin: 50rpx auto; border-radius: 10rpx; }
-	.swiper-box .swiper-item image{ width: 503rpx;height: 324rpx;  display: block;margin: 0 auto;}
+	.vipCard{ width: 100%; margin: 50rpx auto; }
+	.vipCard image{ width: 503rpx;height: 324rpx;  display: block;margin: 0 auto;}
 	.msg view{ padding-bottom: 30rpx; font-size: 26rpx; color: #666; line-height: 40rpx;}
 	view.tit{ font-size: 30rpx; font-weight: bold; color: #333; line-height: 60rpx;padding-bottom: 0;}
 	.ql-editor{padding: 30rpx 0;}
