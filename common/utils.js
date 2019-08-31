@@ -671,11 +671,20 @@ export default {
 					uni.setStorageSync('canClick', true);
 					this.showToast('授权请点击同意', 'none');
 				} else {
-					wx.getUserInfo({
-						success: function(user) {
-							callback && callback(user.userInfo, setting);
+					uni.getUserInfo({
+						provider: 'weixin',
+						success: function(infoRes) {
+							console.log('-------获取微信用户所有-----');
+							console.log(JSON.stringify(infoRes.userInfo));
+							callback && callback(infoRes.userInfo, setting);
 						}
 					});
+					
+					/* wx.getUserInfo({
+						success: function(user) {
+							
+						}
+					}); */
 				};
 			}
 		});

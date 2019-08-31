@@ -76,24 +76,24 @@
 			<view class="zixunLis" v-for="(item,index) in consultData" :key="index">
 				<view class="one">
 					<view class="photo">
-						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" ></image>
+						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
 					</view>
 					<view class="msg">
-						<view class="name">{{item.question_name}}</view>
-						<view class="phone">{{item.question_phone}}</view>
+						<view class="name">{{item.title}}</view>
+						<view class="phone">{{item.contactPhone}}</view>
 					</view>
 				</view>
 				<view class="two">
 					<image class="icon" src="../../static/images/home-icon9.png" mode=""></image>
-					{{item.question}}
+					{{item.passage1}}
 				</view>
 				<view class="three">
 					<img class="L-icon" src="../../static/images/home-icon10.png" alt="">
 					<view class="r-answer">
 						<view class="line1 flexRowBetween">
 							<view class="ll">
-								<image :src="item.answer_photo" mode=""></image>
-								<view>{{item.answer_name}}</view>
+								<image :src="item.bannerImg&&item.bannerImg[0]?item.bannerImg[0].url:''" mode=""></image>
+								<view>{{item.small_title}}</view>
 							</view>
 							<view class="rr flexRowBetween starClass">
 								<view class="starBox">
@@ -106,12 +106,12 @@
 								<view>9.5分</view>
 							</view>
 						</view>
-						<view class="line2">{{item.answer}}</view>
+						<view class="line2">{{item.passage2}}</view>
 					</view>
 				</view>
 				<view class="four flexRowBetween ">
-					<view class="tit">{{item.answer_label}}</view>
-					<view class="time">{{item.answer_time}}</view>
+					<view class="tit">{{item.label&&item.label[0]?item.label[0].title:''}}</view>
+					<view class="time">{{item.create_time}}</view>
 				</view>
 			</view>
 		</view>
@@ -126,7 +126,8 @@
 		</view>
 		
 		<view class="newslisbox">
-			<view class="newslis" v-for="(item,index) in articleData" :key="index"  @click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails'}})">
+			<view class="newslis" v-for="(item,index) in articleData" :key="index"  
+			@click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails'}})">
 				<view class="twoCt flexRowBetween">
 					<view class="leftbox">
 						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
@@ -282,6 +283,17 @@
 						tableName: 'Label',
 						searchItem: {
 							title: ['=', ['法律咨询']],
+						},
+						middleKey: 'menu_id',
+						key: 'id',
+						condition: 'in',
+					},
+				};
+				postData.getAfter = {
+					label: {
+						tableName: 'Label',
+						searchItem: {
+							status:1
 						},
 						middleKey: 'menu_id',
 						key: 'id',

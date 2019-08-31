@@ -46,34 +46,58 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{}
+				mainData:[],
+				searchItem:{
+					pay_status:1
+				}
 			}
 		},
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
 
-			getMainData() {
+			getMainData(isNew) {
 				const self = this;
-				console.log('852369')
+				if (isNew) {
+					self.$Utils.clearPageIndex(self);
+				};
 				const postData = {};
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
 				postData.tokenFuncName = 'getProjectToken';
-
+				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
+				postData.searchItem.thirdapp_id = 2;
+				postData.searchItem.type = 1;
+				postData.order = {
+					create_time: 'desc'
+				};
 				const callback = (res) => {
-					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+					if (res.solely_code == 100000) {
+						uni.setStorageSync('canClick', true);
+						if (res.info.data.length > 0) {
+							self.mainData.push.apply(self.mainData, res.info.data);
+						} else {
+							self.$Utils.showToast('没有更多了', 'none');
+						};
 					} else {
-						self.$Utils.showToast(res.msg, 'none')
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast('网络故障', 'none')
 					};
 					self.$Utils.finishFunc('getMainData');
-
 				};
 				self.$apis.orderGet(postData, callback);
-
 			},
 
 		},

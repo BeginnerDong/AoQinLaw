@@ -55,15 +55,19 @@
     /* 快应用特有相关 */
     "mp-weixin" : {
         /* 小程序特有相关 */
-        "appid" : "wx17e356eb62d1fbe5",
+        "appid" : "wx9f77e7e33b040ba4",
         "setting" : {
             "urlCheck" : false,
             "es6" : true,
             "postcss" : false,
-            "minified" : true
+            "minified" : false
         },
         "usingComponents" : false,
-        "permission" : {}
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "你的位置信息将用于小程序位置接口的效果展示"
+            }
+        }
     },
     "h5" : {
         "title" : "小法宝",

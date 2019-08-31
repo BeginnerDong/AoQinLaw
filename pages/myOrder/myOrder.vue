@@ -8,89 +8,28 @@
 		
 		<view class="prolisbox">
 			
-			<view v-if="current==1">
-				<view class="prolis">
+			<view>
+				<view class="prolis"  v-for="(item,index) in mainData">
 					<view class="twoCt">
 						<view class="leftbox">
-							<image src="../../static/images/details-img.png"></image>
+							<image :src="item.products&&item.products[0]&&item.products[0].snap_product&&item.products[0].snap_product.product&&item.products[0].snap_product.product.mainImg&&item.products[0].snap_product.product.mainImg[0]?item.products[0].snap_product.product.mainImg[0].url:''"></image>
 						</view>
 						<view class="cont">
-							<view class="title avoidOverflow2">标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题</view>
+							<view class="title avoidOverflow2">{{item.products&&item.products[0]&&item.products[0].snap_product&&item.products[0].snap_product.product&&item.products[0].snap_product.product?item.products[0].snap_product.product.title:''}}</view>
 							<view class="charge">会员免费</view>
 						</view>
 					</view>
-					<view class="explain">
-						<view>不涉及财产关系100元/小时；(不足1小时按1小时计算)</view>
-						<view class="price">56.00</view>
+					<view class="explain" v-for="c_item in item.products">
+						<view>{{c_item.snap_product?c_item.snap_product.title:''}}</view>
+						<view class="price">{{c_item.snap_product?c_item.snap_product.price:''}}</view>
 					</view>
 					<view class="bBtn red">
 						<view>总金额：</view>
-						<view class="price">56.00</view>
-						<view class="btn gopay">去支付</view>
+						<view class="price">{{item.price}}</view>
+						<view class="btn gopay" @click="pay(index)">去支付</view>
 					</view>
 				</view>
-				<view class="prolis">
-					<view class="twoCt">
-						<view class="leftbox">
-							<image src="../../static/images/details-img.png"></image>
-						</view>
-						<view class="cont">
-							<view class="title avoidOverflow2">标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题</view>
-							<view class="charge">会员免费</view>
-						</view>
-					</view>
-					<view class="explain">
-						<view>不涉及财产关系100元/小时；(不足1小时按1小时计算)</view>
-						<view class="price">56.00</view>
-					</view>
-					<view class="bBtn red">
-						<view>总金额：</view>
-						<view class="price">56.00</view>
-						<view class="btn gopay">去支付</view>
-					</view>
-				</view>
-			</view>
-			<view v-if="current==2">
-				<view class="prolis">
-					<view class="twoCt">
-						<view class="leftbox">
-							<image src="../../static/images/details-img.png"></image>
-						</view>
-						<view class="cont">
-							<view class="title avoidOverflow2">标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题</view>
-							<view class="charge">会员免费</view>
-						</view>
-					</view>
-					<view class="explain">
-						<view>不涉及财产关系100元/小时；(不足1小时按1小时计算)</view>
-						<view class="price">56.00</view>
-					</view>
-					<view class="bBtn red">
-						<view>总金额：</view>
-						<view class="price">56.00</view>
-					</view>
-				</view>
-			</view>
-			<view v-if="current==3">
-				<view class="prolis">
-					<view class="twoCt">
-						<view class="leftbox">
-							<image src="../../static/images/details-img.png"></image>
-						</view>
-						<view class="cont">
-							<view class="title avoidOverflow2">标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题</view>
-							<view class="charge">会员免费</view>
-						</view>
-					</view>
-					<view class="explain">
-						<view>不涉及财产关系100元/小时；(不足1小时按1小时计算)</view>
-						<view class="price">56.00</view>
-					</view>
-					<view class="bBtn red">
-						<view>总金额：</view>
-						<view class="price">56.00</view>
-					</view>
-				</view>
+				
 			</view>
 			
 		</view>
@@ -103,14 +42,29 @@
 			return {
 				Router:this.$Router,
 				mainData:[],
-				current:1
+				current:1,
+				searchItem:{
+					pay_status:0
+				}
 			}
 		},
 		onLoad() {
 			const self = this;
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
 			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
+			
 			change(current) {
 				const self = this;
 				uni.setStorageSync('canClick', false);
@@ -132,12 +86,12 @@
 			getMainData(isNew) {
 				const self = this;
 				if (isNew) {
-					self.$Units.clearPageIndex(self);
+					self.$Utils.clearPageIndex(self);
 				};
 				const postData = {};
-				postData.paginate = self.$Units.cloneForm(self.paginate);
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
 				postData.tokenFuncName = 'getProjectToken';
-				postData.searchItem = self.$Units.cloneForm(self.searchItem);
+				postData.searchItem = self.$Utils.cloneForm(self.searchItem);
 				postData.searchItem.thirdapp_id = 2;
 				postData.searchItem.type = 1;
 				postData.searchItem.passage1 = 'user';
@@ -150,83 +104,55 @@
 						if (res.info.data.length > 0) {
 							self.mainData.push.apply(self.mainData, res.info.data);
 						} else {
-							self.$Units.showToast('没有更多了', 'none');
+							self.$Utils.showToast('没有更多了', 'none');
 						};
 					} else {
 						uni.setStorageSync('canClick', true);
-						self.$Units.showToast('网络故障', 'none')
+						self.$Utils.showToast('网络故障', 'none')
 					};
-			
-					
-					console.log('getMainData', self.data.mainData)
+					self.$Utils.finishFunc('getMainData');
 				};
-				self.$Units.orderGet(postData, callback);
+				self.$apis.orderGet(postData, callback);
 			},
 				
 			
 			
-			pay(e) {
+			pay(index) {
 				const self = this;
-				var index = api.getDataSet(e,'index');
+				uni.setStorageSync('canClick', false);
 				const postData = {
 					tokenFuncName: 'getProjectToken',
 					searchItem: {
-						id: self.data.mainData[index].id,
+						id: self.mainData[index].id,
 					},
 					/* score:self.data.mainData[index].price, */
 					wxPay: {
-						price: self.data.mainData[index].price,
+						price: self.mainData[index].price,
 					},
 				};
 				const callback = (res) => {
 					if (res.solely_code == 100000) {
-						api.buttonCanClick(self, true);
+						uni.setStorageSync('canClick', true);
 						if (res.info) {
 							const payCallback = (payData) => {
 								if (payData == 1) {
-									api.showToast(res.msg, 'none')
+									self.$Utils.showToast(res.msg, 'none')
 									self.getMainData(true);
 								};
 							};
-							api.realPay(res.info, payCallback);
+							self.$apis.realPay(res.info, payCallback);
 						}
 					} else {
-						api.showToast(res.msg, 'none')
+						self.$Utils.showToast(res.msg, 'none')
 						self.getMainData(true);
 					}
 				};
-				api.pay(postData, callback);
+				self.$apis.pay(postData, callback);
 			},
 			
 			
 			
-			menuClick: function(e) {
-				const self = this;
-				api.buttonCanClick(self);
-				const num = e.currentTarget.dataset.num;
-				self.changeSearch(num);
-			},
 			
-			changeSearch(num) {
-				const self = this;
-				this.setData({
-					num: num
-				});
-				self.data.searchItem = {}
-				if (num == '0') {
-					self.data.searchItem.pay_status = '0';
-				} else if (num == '1') {
-					self.data.searchItem.pay_status = '1';
-			
-				} else if (num == '2') {
-					self.data.searchItem.pay_status = '1';
-					self.data.searchItem.transport_status  = '2';
-				} 
-				self.setData({
-					web_mainData: [],
-				});
-				self.getMainData(true);
-			},
 
 		},
 	};

@@ -26,7 +26,7 @@
 			<view class="Detai_BfixBox">
 				总金额：
 				<span class="price" style="font-size: 30rpx;">{{price}}</span> 
-				<view class="Rbtn" @click="webSelf.$Router.navigateTo({route:{path:'/pages/purchase/purchase'}})">立即下单</view>
+				<view class="Rbtn" @click="goBuy">立即下单</view>
 			</view>
 		</view>
 		
@@ -109,6 +109,21 @@
 					}
 				}
 				console.log('self.price',self.price)
+			},
+			
+			goBuy(){
+				const self = this;
+				var idArry= [];
+				for (var i = 0; i < self.mainData.sku.length; i++) {
+					if(self.mainData.sku[i].select){
+						idArry.push(self.mainData.sku[i].id);			
+					}
+				}
+				if(idArry.length==0){
+					self.$Utils.showToast('未选择服务','none')
+					return
+				};
+				self.Router.navigateTo({route:{path:'/pages/purchase/purchase?id='+idArry}})
 			},
 
 		},

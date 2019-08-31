@@ -16,33 +16,33 @@
 			</view>
 		</view>
 		<view class="f5H10"></view>
-		
+
 		<view class="purch_indList">
 			<view class="purchTitle flexRowBetween pdlr4">
 				<view class="tit">服务项目</view>
 			</view>
-			<view class="fwxm mglr4">
-				<view class="text">不涉及财产关系100元/小时；(不足1小时按1小时计算)</view>
-				<view class="price">56.00</view>
+			<view class="fwxm mglr4" v-for="item in mainData">
+				<view class="text">{{item.title}}</view>
+				<view class="price">{{item.price}}</view>
 			</view>
 			<view class="f5H10"></view>
 			<view class="purchTitle flexRowBetween pdlr4" style="border-bottom:2rpx solid #E7E7E7 ;">
 				<view class="tit">个人姓名</view>
 				<view class="rr">
-					<input type="text" value="" placeholder="请输入姓名" placeholder-style="color:#999" />
+					<input type="text" value="" placeholder="请输入姓名" placeholder-style="color:#999" v-model="submitData.name"/>
 				</view>
 			</view>
-			
+
 			<view class="purchTitle flexRowBetween pdlr4">
 				<view class="tit">问题详情</view>
 			</view>
 			<view class="pdlr4">
-				<textarea value="" placeholder="请输入您想要的问题一遍律师提前准备" placeholder-style="color:#999;" />
-			</view>
+				<textarea value="" placeholder="请输入您想要的问题以便律师提前准备" placeholder-style="color:#999;"  v-model="submitData.description"/>
+				</view>
 			<view class="Detai_BfixBox">
 				总金额：
-				<span class="price" style="font-size: 30rpx;">56.00</span> 
-				<view class="Rbtn" >立即下单</view>
+				<span class="price" style="font-size: 30rpx;">{{price}}</span> 
+				<button class="Rbtn" open-type="getUserInfo"  @getuserinfo="Utils.stopMultiClick(submit)" style="margin: 0;font-size:14px">立即下单</button>
 			</view>
 			
 			
@@ -58,33 +58,133 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{}
+				Utils:this.$Utils,
+				price:0,
+				mainData:[],
+				submitData:{
+					name:'',
+					description:''
+				}
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.idArray = options.id;
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
+			
 			getMainData() {
 				const self = this;
-				console.log('852369')
 				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-
+				postData.searchItem = {
+					thirdapp_id: 2,
+					id: ['in', self.idArray]
+				};
 				const callback = (res) => {
-					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
-					} else {
-						self.$Utils.showToast(res.msg, 'none')
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
 					};
 					self.$Utils.finishFunc('getMainData');
-
+					self.countPrice()
 				};
-				self.$apis.orderGet(postData, callback);
-
+				self.$apis.skuGet(postData, callback)
+			},
+			
+			countPrice() {
+				const self = this;
+				for (var i = 0; i < self.mainData.length; i++) {
+					self.price += parseFloat(self.mainData[i].price)
+				}
+			},
+			
+			submit() {
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				const pass = self.$Utils.checkComplete(self.submitData);
+				const callback = (user, res) => {
+					if(pass){
+						self.addOrder();
+					}else{
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast('请补充信息','none')
+					}	
+				};
+				self.$Utils.getAuthSetting(callback);
+			},
+			
+			
+			addOrder() {
+				const self = this;
+				const orderList = [{
+					sku: [],
+					type: 1
+				}];
+				for (var i = 0; i < self.mainData.length; i++) {
+					orderList[0].sku.push({
+						id: self.mainData[i].id,
+						count: 1
+					}, );
+				};
+				if (!self.order_id) {
+					const postData = {
+						tokenFuncName: 'getProjectToken',
+						orderList: orderList,
+						data: {
+							passage1: 'user',
+							name: self.submitData.name,
+							description: self.submitData.description
+						}
+					};
+					const callback = (res) => {
+						if (res && res.solely_code == 100000) {
+							self.order_id = res.info.id
+							self.pay(self.order_id);
+						};
+					};
+					self.$apis.addOrder(postData, callback);
+				} else {
+					self.pay(self.order_id)
+				}
+			},
+			
+			
+			
+			
+			pay() {
+				const self = this;
+				var order_id = self.order_id;
+				const postData = {
+					tokenFuncName: 'getProjectToken',
+					searchItem: {
+						id: order_id,
+					},
+					wxPay: {
+						price: self.price
+					}
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000) {
+						uni.setStorageSync('canClick', true);
+						if (res.info) {
+							const payCallback = (payData) => {
+								if (payData == 1) {
+									self.$Utils.showToast('操作成功', 'none');
+									setTimeout(function() {
+										Router.reLaunch({route:{path:'/pages/user/user'}})
+									}, 800)
+								};
+							};
+							self.$apis.realPay(res.info, payCallback);
+						}
+					} else {
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast(res.msg, 'none')
+					}
+				};
+				self.$apis.pay(postData, callback);
 			},
 
 		},
