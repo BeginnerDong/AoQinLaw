@@ -122,11 +122,11 @@
 		<!-- 热点资讯 -->
 		<view class="infor-title flexRowBetween">
 			<view class="tt">热点资讯</view>
-			<view class="more">更多&gt;</view>
+			<view class="more" @click="Router.navigateTo({route:{path:'/pages/information/information'}})">更多&gt;</view>
 		</view>
 		
 		<view class="newslisbox">
-			<view class="newslis" v-for="(item,index) in articleData" :key="index">
+			<view class="newslis" v-for="(item,index) in articleData" :key="index"  @click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails'}})">
 				<view class="twoCt flexRowBetween">
 					<view class="leftbox">
 						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>

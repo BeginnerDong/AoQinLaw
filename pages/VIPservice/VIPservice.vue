@@ -18,6 +18,26 @@
 			<view class="content ql-editor" v-html="mainData[currentIndex].content">
 			</view>
 		</view>
+		<view class="f5H10"></view>
+		<view class="pdlr4 seviceNum">
+			<view class="tit">已使用服务次数</view>
+			<view class="lis flexRowBetween">
+				<view class="">会员咨询</view>
+				<view class="nmb">8次</view>
+			</view>
+			<view class="lis flexRowBetween">
+				<view class="">撰写合同</view>
+				<view class="nmb">8次</view>
+			</view>
+			<view class="lis flexRowBetween">
+				<view class="">民事诉讼</view>
+				<view class="nmb">8次</view>
+			</view>
+			<view class="lis flexRowBetween">
+				<view class="">标准化催收服务</view>
+				<view class="nmb">8次</view>
+			</view>
+		</view>
 		
 		<view class="submitbtn" style="margin: 100rpx auto 0 auto">
 			<button type="submit" @click="Utils.stopMultiClick(submit)">立即购买</button>
@@ -167,7 +187,11 @@
 	.swiper-box{ height: 400rpx; width: 100%; margin: 50rpx auto; border-radius: 10rpx; }
 	.swiper-box .swiper-item image{ width: 251px;height: 324rpx;  display: block;margin: 0 auto;}
 	.msg view{ padding-bottom: 30rpx; font-size: 26rpx; color: #666; line-height: 40rpx;}
-	.msg .tit{ font-size: 30rpx; font-weight: bold;}
+	view.tit{ font-size: 30rpx; font-weight: bold; color: #333; line-height: 60rpx;padding-bottom: 0;}
+	.ql-editor{padding: 30rpx 0;}
 	
+	.seviceNum{padding: 20rpx 4%;}
+	.seviceNum .lis{ height: 80rpx;border-bottom: 2rpx solid #e7e7e7; font-size: 26rpx; color: #666;}
+	.seviceNum .nmb{ color: #537DEB;}
 
 </style>

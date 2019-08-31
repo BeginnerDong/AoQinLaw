@@ -59,6 +59,7 @@
 		font-size: 26rpx;
 		color: #222;
 		line-height: 44rpx;
+		min-height: 44rpx;
 	}
 	.zixunLis .one .msg .phone{
 		color: #666;
@@ -70,6 +71,7 @@
 		position: relative;
 		font-size: 26rpx; 
 		line-height: 44rpx;
+		min-height: 44rpx;
 	}
 	.zixunLis .two .icon{
 		width: 30rpx;
@@ -96,6 +98,7 @@
 		padding: 20rpx;
 		background: #f8f8f8;
 		border-radius: 10rpx;
+		min-height: 70rpx;
 	}
 	.zixunLis .three .line1 .ll{
 		font-size: 26rpx;

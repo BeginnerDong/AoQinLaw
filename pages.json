@@ -174,6 +174,20 @@
 				"navigationBarTitleText": "添加银行卡",
 				"onReachBottomDistance":100
 			}
+		},
+		{
+			"path": "pages/information/information",
+			"style": {
+				"navigationBarTitleText": "热点资讯",
+				"onReachBottomDistance":100
+			}
+		},
+		{
+			"path": "pages/informationDetails/informationDetails",
+			"style": {
+				"navigationBarTitleText": "资讯详情",
+				"onReachBottomDistance":100
+			}
 		}
 		
     ],
