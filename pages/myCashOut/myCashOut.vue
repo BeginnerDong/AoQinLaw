@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="center addBtn"  @click="webSelf.$Router.navigateTo({route:{path:'/pages/addBankCard/addBankCard'}})">
+		<view class="center addBtn"  @click="Router.navigateTo({route:{path:'/pages/addBankCard/addBankCard'}})">
 			<image src="../../static/images/withdrawal-icon.png" mode=""></image>
 			添加银行卡
 		</view>
@@ -39,7 +39,7 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
+				Router:this.$Router,
 				showView: false,
 				score:'',
 				wx_info:{},

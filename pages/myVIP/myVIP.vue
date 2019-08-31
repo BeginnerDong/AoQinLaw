@@ -4,7 +4,7 @@
 		<view class="imgbox">
 			<image src="../../static/images/vip-img2.png"  mode=""></image>
 		</view>
-		<view class="submitbtn"  @click="webSelf.$Router.navigateTo({route:{path:'/pages/VIPservice/VIPservice'}})">
+		<view class="submitbtn"  @click="Router.navigateTo({route:{path:'/pages/VIPservice/VIPservice'}})">
 			<button type="button">立即购买</button>
 		</view>
 
@@ -15,10 +15,8 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
-				showView: false,
-				score:'',
-				wx_info:{},
+				Router:this.$Router,
+				
 				
 			}
 		},

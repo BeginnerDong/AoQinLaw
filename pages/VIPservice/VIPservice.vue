@@ -3,10 +3,10 @@
 		<!-- banner -->
 		<view class="banner-box">
 			<view class="banner">
-				<swiper class="swiper-box" indicator-dots="indicatorDots" autoplay="autoplay" interval="interval" duration="duration" indicator-active-color="#537deb" indicator-color="#dbdbdb">
-					<block v-for="(item,index) in labelData" :key="index">
+				<swiper class="swiper-box" @change="changeIndex" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration" indicator-active-color="#537deb" indicator-color="#dbdbdb">
+					<block v-for="(item,index) in mainData" :key="index">
 						<swiper-item class="swiper-item">
-							<image :src="item" class="slide-image" />
+							<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" class="slide-image" />
 						</swiper-item>
 					</block>
 				</swiper>
@@ -15,13 +15,12 @@
 		
 		<view class="msg pdlr4">
 			<view class="tit">服务说明</view>
-			<view>1、内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
-			<view>2、内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
-			<view>3、内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
+			<view class="content ql-editor" v-html="mainData[currentIndex].content">
+			</view>
 		</view>
 		
 		<view class="submitbtn" style="margin: 100rpx auto 0 auto">
-			<button type="submit">立即购买</button>
+			<button type="submit" @click="Utils.stopMultiClick(submit)">立即购买</button>
 		</view>
 
 
@@ -32,42 +31,130 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
-				showView: false,
-				score:'',
-				wx_info:{},
-				labelData: [
-					"../../static/images/vip-img1.png",
-					"../../static/images/vip-img1.png",
-					"../../static/images/vip-img1.png",
-				]
+				Router:this.$Router,
+				Utils:this.$Utils,
+				mainData:[],
+				indicatorDots: true,
+				autoplay: false,
+				interval: 2000,
+				duration: 500,
+				currentIndex:0
 			}
 		},
 		
 		onLoad() {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
+			
+			changeIndex(e){
+				const self = this;
+				self.currentIndex = e.detail.current;
+				console.log(e)
+			},
 
 			getMainData() {
 				const self = this;
-				console.log('852369')
 				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-
+				postData.searchItem = {
+					thirdapp_id:2,
+					type:2,
+				};	
 				const callback = (res) => {
-					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
 					} else {
-						self.$Utils.showToast(res.msg, 'none')
+						self.$Utils.showToast('没有更多了', 'none');
 					};
 					self.$Utils.finishFunc('getMainData');
-
 				};
-				self.$apis.orderGet(postData, callback);
-
+				self.$apis.productGet(postData, callback);
 			},
+			
+			submit() {
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				/* const callback = (user, res) => {
+					self.addOrder();
+				};
+				api.getAuthSetting(callback); */
+				self.addOrder();
+			},
+			
+			
+			addOrder() {
+				const self = this;
+				const orderList = [{
+					product: [],
+					type: 2
+				}];
+			
+				orderList[0].product.push({
+					id: self.mainData[self.currentIndex].id,
+					count: 1
+				}, );
+				if (!self.order_id) {
+					const postData = {
+						tokenFuncName: 'getProjectToken',
+						orderList: orderList,
+					};
+					console.log('addOrder', self.addressData)
+			
+					const callback = (res) => {
+						if (res && res.solely_code == 100000) {
+							self.order_id = res.info.id
+							self.pay(self.order_id);
+						}else{
+							uni.setStorageSync('canClick', true);
+							self.$Units.showToast(res.msg,'none')
+						}
+					};
+					self.$apis.addOrder(postData, callback);
+				} else {
+					self.pay(self.order_id)
+				}
+			},
+			
+			
+			
+			
+			pay() {
+				const self = this;
+				var order_id = self.order_id;
+				const postData = {
+					tokenFuncName: 'getProjectToken',
+					searchItem: {
+						id: order_id,
+					},
+					/* score:self.mainData[self.currentIndex].price */
+					wxPay: {
+						price: self.mainData[self.currentIndex].price
+					}
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000) {
+						uni.setStorageSync('canClick', true);
+						if (res.info) {
+							const payCallback = (payData) => {
+								if (payData == 1) {
+									self.$Units.showToast('购买成功', 'none');
+									setTimeout(function() {
+										Router.reLaunch({route:{path:'/pages/indx/indx'}})
+									}, 800)
+								};
+							};
+							self.$apis.realPay(res.info, payCallback);
+						}
+					} else {
+						self.$Units.showToast('支付失败', 'none')
+					}
+				};
+				self.$apis.pay(postData, callback);
+			},
+			
+			
 
 		},
 	};

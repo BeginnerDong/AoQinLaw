@@ -662,6 +662,24 @@ export default {
 		return new Date(mydata) / 1000;
 
 	},
+	
+	getAuthSetting(callback) {
+		wx.getSetting({
+			success: setting => {
+				if (!setting.authSetting['scope.userInfo']) {
+					wx.hideLoading();
+					uni.setStorageSync('canClick', true);
+					this.showToast('授权请点击同意', 'none');
+				} else {
+					wx.getUserInfo({
+						success: function(user) {
+							callback && callback(user.userInfo, setting);
+						}
+					});
+				};
+			}
+		});
+	},
 
 	timeto(date, type) {
 		var seperator1 = "-";

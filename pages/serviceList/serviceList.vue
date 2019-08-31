@@ -3,8 +3,9 @@
 
 		<!-- 特色服务 -->
 		<view class="proLis flexRowBetween">
-			<view class="item-lis" v-for="(item,index) in produtList" :key="index" @click="webSelf.$Router.navigateTo({route:{path:'/pages/serviceDetails/serviceDetails'}})">
-				<image class="img" :src="item.picUl" alt="" />
+			<view class="item-lis" v-for="(item,index) in mainData" :key="index" 
+			@click="Router.navigateTo({route:{path:'/pages/serviceDetails/serviceDetails?id='+item.id}})">
+				<image class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" alt="" />
 				<view class="tit avoidOverflow">{{item.title}}</view>
 				<view class="price">{{item.price}}</view>
 				<view class="freeVip">会员免费</view>
@@ -20,64 +21,56 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
-				showView: false,
-				score:'',
-				wx_info:{},
+				Router:this.$Router,
 				
-				produtList: [
-					{
-						picUl: "../../static/images/home-img1.png",
-						title: "1法律咨询",
-						price: "56.00"
-					},
-					{
-						picUl: "../../static/images/home-banner.png",
-						title: "2法律咨询",
-						price: "66.00"
-					},
-					{
-						picUl: "../../static/images/profile-img.png",
-						title: "法律咨询",
-						price: "56.00"
-					},
-					{
-						picUl: "../../static/images/home-img1.png",
-						title: "法律咨询",
-						price: "56.00"
-					},
-					{
-						picUl: "../../static/images/details-img2.png",
-						title: "产品标题1",
-						price: "56.00"
-					}
-				]
+				mainData:[],
 				
 			}
 		},
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
+		
 		methods: {
 
-			getMainData() {
+			getMainData(isNew) {
 				const self = this;
-				console.log('852369')
+				if (isNew) {
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						is_page: true,
+						pagesize: 5
+					}
+				};
 				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id:2,
+					type:1,
+				};
 				const callback = (res) => {
-					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
 					} else {
-						self.$Utils.showToast(res.msg, 'none')
+						self.$Utils.showToast('没有更多了', 'none');
 					};
 					self.$Utils.finishFunc('getMainData');
-
 				};
-				self.$apis.orderGet(postData, callback);
-
+				self.$apis.productGet(postData, callback);
 			},
 
 		},

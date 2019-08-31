@@ -3,15 +3,15 @@
 
 		<!-- 律师列表 -->
 		<view class="lawyerList mglr4">
-			<view class="info"  v-for="(item,index) in lawyerList" :key="index" @click="webSelf.$Router.navigateTo({route:{path:'/pages/lawyerDetail/lawyerDetail'}})">
+			<view class="info"  v-for="(item,index) in mainData" :key="index" @click="Router.navigateTo({route:{path:'/pages/lawyerDetail/lawyerDetail?id='+item.id}})">
 				<view class="info-left">
-					<image :src="item.photoImg"></image>
+					<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
 				</view>
 				<view class="info-right">
-					<view class="name">{{item.name}}<view class="lable">诉讼律师</view></view>
+					<view class="name">{{item.title}}<view class="lable">{{item.passage1}}</view></view>
 					<view class="two">
 						<image class="icon" src="../../static/images/lvshi-icon2.png" ></image>
-						执业{{item.workTime}}
+						执业{{item.small_title}}年
 						<view class="flexRowBetween starClass" style="margin-left: 10rpx;">
 							<view class="starBox">
 								<image src="../../static/images/home-icon12.png" mode=""></image>
@@ -20,12 +20,12 @@
 								<image src="../../static/images/home-icon13.png" mode=""></image>
 								<image src="../../static/images/home-icon11.png" mode=""></image>
 							</view>
-							<view>{{item.score}}分</view>
+							<view>8.5分</view>
 						</view>
 						<img class="arrow" src="../../static/images/arrow-icon1.png" alt="">
 					</view>
 					<view class="three">
-						<block v-for="child in item.c_item" :key="index">
+						<block v-for="child in item.keywords" :key="index">
 							<view class="info-item">{{child}}</view>
 						</block>
 					</view>
@@ -42,69 +42,71 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
-				showView: false,
-				score:'',
-				wx_info:{},
-				lawyerList:[
-					{
-						photoImg:'../../static/images/lvshi-img1.png',
-						name:"张胜男",
-						lable:"诉讼律师",
-						workTime:"5年",
-						score:"8.5",
-						c_item:["刑事诉讼","债权债务"]
-					},
-					{
-						photoImg:'../../static/images/lvshi-img1.png',
-						name:"李海海",
-						lable:"诉讼律师",
-						workTime:"5年",
-						score:"9.5",
-						c_item:["人身损害","债权债务","财产纠纷","家庭纠纷","财产纠纷"]
-					},
-					{
-						photoImg:'../../static/images/lvshi-img1.png',
-						name:"刘某某",
-						lable:"诉讼律师",
-						workTime:"5年",
-						score:"8.5",
-						c_item:["刑事诉讼","债权债务"]
-					},
-					{
-						photoImg:'../../static/images/lvshi-img1.png',
-						name:"李海海",
-						lable:"诉讼律师",
-						workTime:"5年",
-						score:"9.5",
-						c_item:["人身损害","债权债务","财产纠纷","家庭纠纷","财产纠纷"]
-					}
-				]
+				Router:this.$Router,
+				
+				mainData:[],
+				
 			}
 		},
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
+		
 		methods: {
 
-			getMainData() {
+			getMainData(isNew) {
 				const self = this;
-				console.log('852369')
+				if (isNew) {
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						is_page: true,
+						pagesize: 5
+					}
+				};
 				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id:2,
+					type:2,
+					show :1
+				};
+				postData.getBefore = {
+					caseData: {
+						tableName: 'Label',
+						searchItem: {
+							title: ['=', ['律师']],
+						},
+						middleKey: 'menu_id',
+						key: 'id',
+						condition: 'in',
+					},
+				};
 				const callback = (res) => {
-					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
+						for (var i = 0; i < self.mainData.length; i++) {
+							self.mainData[i].keywords = self.mainData[i].keywords.split(',')
+						}
 					} else {
-						self.$Utils.showToast(res.msg, 'none')
+						self.$Utils.showToast('没有更多了', 'none');
 					};
 					self.$Utils.finishFunc('getMainData');
-
 				};
-				self.$apis.orderGet(postData, callback);
-
+				self.$apis.articleGet(postData, callback);
 			},
 
 		},

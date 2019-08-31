@@ -1,7 +1,7 @@
 <template>
 	<view class="myCace pdlr4">
 		<view class="item">
-			<view  @click="webSelf.$Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
+			<view  @click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
 				<view>标题标题标题标题标题标题标题标题</view>
 				<view class="tag ok">已解决</view>
 				<view class="lable flexRowBetween">
@@ -11,11 +11,11 @@
 				<view class="info">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</view>
 			</view>
 			<view style="display: flex; justify-content: flex-end;padding-top: 20rpx;">
-				<view class="plBtn" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myCasePjDetail/myCasePjDetail'}})">评论服务</view>
+				<view class="plBtn" @click="Router.navigateTo({route:{path:'/pages/myCasePjDetail/myCasePjDetail'}})">评论服务</view>
 			</view>
 		</view>
 		<view class="item">
-			<view @click="webSelf.$Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
+			<view @click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
 				<view>标题标题标题标题标题标题标题标题</view>
 				<view class="tag ing">解决中</view>
 				<view class="lable flexRowBetween">
@@ -26,7 +26,7 @@
 			</view>
 		</view>
 		<view class="item">
-			<view @click="webSelf.$Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
+			<view @click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
 				<view>标题标题标题标题标题标题标题标题</view>
 				<view class="tag no">未解决</view>
 				<view class="lable flexRowBetween">
@@ -45,7 +45,7 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
+				Router:this.$Router,
 				showView: false,
 				score:'',
 				wx_info:{}

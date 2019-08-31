@@ -101,41 +101,131 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
-				showView: false,
-				score:'',
-				wx_info:{},
+				Router:this.$Router,
+				mainData:[],
 				current:1
 			}
 		},
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
 		methods: {
 			change(current) {
 				const self = this;
+				uni.setStorageSync('canClick', false);
 				if(current!=self.current){
 					self.current = current
+					if (current == '1') {
+						self.data.searchItem.pay_status = '0';
+					} else if (current == '2') {
+						self.data.searchItem.pay_status = '1';
+								
+					} else if (current == '3') {
+						self.data.searchItem.pay_status = '1';
+						self.data.searchItem.transport_status  = '2';
+					} 
+					self.getMainData(true)
 				}
 			},
-			getMainData() {
+			
+			getMainData(isNew) {
 				const self = this;
-				console.log('852369')
-				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-
-				const callback = (res) => {
-					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
-					} else {
-						self.$Utils.showToast(res.msg, 'none')
-					};
-					self.$Utils.finishFunc('getMainData');
-
+				if (isNew) {
+					self.$Units.clearPageIndex(self);
 				};
-				self.$apis.orderGet(postData, callback);
-
+				const postData = {};
+				postData.paginate = self.$Units.cloneForm(self.paginate);
+				postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = self.$Units.cloneForm(self.searchItem);
+				postData.searchItem.thirdapp_id = 2;
+				postData.searchItem.type = 1;
+				postData.searchItem.passage1 = 'user';
+				postData.order = {
+					create_time: 'desc'
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000) {
+						uni.setStorageSync('canClick', true);
+						if (res.info.data.length > 0) {
+							self.mainData.push.apply(self.mainData, res.info.data);
+						} else {
+							self.$Units.showToast('没有更多了', 'none');
+						};
+					} else {
+						uni.setStorageSync('canClick', true);
+						self.$Units.showToast('网络故障', 'none')
+					};
+			
+					
+					console.log('getMainData', self.data.mainData)
+				};
+				self.$Units.orderGet(postData, callback);
+			},
+				
+			
+			
+			pay(e) {
+				const self = this;
+				var index = api.getDataSet(e,'index');
+				const postData = {
+					tokenFuncName: 'getProjectToken',
+					searchItem: {
+						id: self.data.mainData[index].id,
+					},
+					/* score:self.data.mainData[index].price, */
+					wxPay: {
+						price: self.data.mainData[index].price,
+					},
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000) {
+						api.buttonCanClick(self, true);
+						if (res.info) {
+							const payCallback = (payData) => {
+								if (payData == 1) {
+									api.showToast(res.msg, 'none')
+									self.getMainData(true);
+								};
+							};
+							api.realPay(res.info, payCallback);
+						}
+					} else {
+						api.showToast(res.msg, 'none')
+						self.getMainData(true);
+					}
+				};
+				api.pay(postData, callback);
+			},
+			
+			
+			
+			menuClick: function(e) {
+				const self = this;
+				api.buttonCanClick(self);
+				const num = e.currentTarget.dataset.num;
+				self.changeSearch(num);
+			},
+			
+			changeSearch(num) {
+				const self = this;
+				this.setData({
+					num: num
+				});
+				self.data.searchItem = {}
+				if (num == '0') {
+					self.data.searchItem.pay_status = '0';
+				} else if (num == '1') {
+					self.data.searchItem.pay_status = '1';
+			
+				} else if (num == '2') {
+					self.data.searchItem.pay_status = '1';
+					self.data.searchItem.transport_status  = '2';
+				} 
+				self.setData({
+					web_mainData: [],
+				});
+				self.getMainData(true);
 			},
 
 		},

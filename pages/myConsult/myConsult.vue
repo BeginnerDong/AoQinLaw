@@ -1,10 +1,10 @@
 <template>
 	<view class="consult pdlr4">
-		<view class="item" v-for="(item,index) in consult" :key="index">
-			<view class="info">{{item.infor}}</view>
+		<view class="item" v-for="(item,index) in mainData" :key="index">
+			<view class="info">{{item.content}}</view>
 			<view class="lable flexRowBetween">
-				<view class="left">{{item.lable}}</view>
-				<view class="right">{{item.time}}</view>
+				<view class="left">{{item.description}}</view>
+				<view class="right">{{item.create_time}}</view>
 			</view>
 		</view>
 		
@@ -16,10 +16,8 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
-				showView: false,
-				score:'',
-				wx_info:{},
+				Router:this.$Router,
+				mainData:[],
 				consult:[
 					{
 						infor:"内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容。"	,
@@ -39,29 +37,53 @@
 				]
 			}
 		},
+		
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
 
-			getMainData() {
+			getMainData(isNew) {
 				const self = this;
-				console.log('852369')
+				if (isNew) {
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						is_page: true,
+						pagesize: 5
+					}
+				};
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id:2,
+					type:2,
+				};
 				const callback = (res) => {
-					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
 					} else {
-						self.$Utils.showToast(res.msg, 'none')
+						self.$Utils.showToast('没有更多了', 'none');
 					};
 					self.$Utils.finishFunc('getMainData');
-
 				};
-				self.$apis.orderGet(postData, callback);
+				self.$apis.messageGet(postData, callback);
 			},
+			
 
 		},
 	};

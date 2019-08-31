@@ -4,17 +4,17 @@
 			<view class="infor">
 				<view class="tit">标题：</view>
 				<view class="edit">
-					<input type="text" placeholder="请输入姓名">
+					<input type="text" placeholder="请输入姓名" v-model="submitData.title">
 				</view>
 			</view>
 			<view class="infor">
 				<view class="tit">内容：</view>
 				<view class="edit">
-					<textarea value="" placeholder="请输入您想要反馈的内容" />
+					<textarea value="" placeholder="请输入您想要反馈的内容" v-model="submitData.content"/>
 				</view>
 			</view>
 			<view class="submitbtn" style="margin:150rpx auto 100rpx auto">
-				<button type="button">提交</button>
+				<button type="button" @click="Utils.stopMultiClick(submit)">提交</button>
 			</view>
 			
 		</form>
@@ -25,35 +25,62 @@
 	export default {
 		data() {
 			return {
-				webSelf: this,
-				showView: false,
-				score:'',
-				wx_info:{}
+				Router:this.$Router,
+				Utils:this.$Utils,
+				submitData:{
+					title:'',
+					content:'',
+					type:3
+				}
 			}
 		},
+		
 		onLoad() {
 			const self = this;
+			uni.setStorageSync('canClick', true);
 			//self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
 
-			getMainData() {
+			submit() {
 				const self = this;
-				console.log('852369')
+				uni.setStorageSync('canClick', false);
+				var phone = self.submitData.phone;
+				const pass = self.$Utils.checkComplete(self.submitData);
+				console.log('pass', pass);
+				console.log('self.submitData',self.submitData)
+				if (pass) {
+					self.messageAdd();
+				} else {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请补全信息', 'none')
+				};
+			},
+					
+			messageAdd() {
+				const self = this;
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-
-				const callback = (res) => {
-					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+				/* if(!wx.getStorageSync('user_info')||!wx.getStorageSync('user_info').headImgUrl){
+				  postData.refreshToken = true;
+				}; */
+				postData.data = {};
+				postData.data = self.$Utils.cloneForm(self.submitData);
+				const callback = (data) => {				
+					if (data.solely_code == 100000) {					
+						self.$Utils.showToast('提交成功', 'none');
+						setTimeout(function() {
+							uni.navigateBack({
+								delta:1
+							})
+						}, 800)
 					} else {
-						self.$Utils.showToast(res.msg, 'none')
-					};
-					self.$Utils.finishFunc('getMainData');
-
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast(data.msg, 'none', 1000)
+					}	
 				};
-				self.$apis.orderGet(postData, callback);
-
+				self.$apis.messageAdd(postData, callback);
 			},
 
 		},
