@@ -19,23 +19,30 @@
 				<view class="more" @click="Router.navigateTo({route:{path:'/pages/myOrder/myOrder'}})">全部订单 &gt;</view>
 			</view>
 			<view class="menu flexRowBetween">
-				<view class="child" @click="Router.navigateTo({route:{path:'/pages/myOrder/myOrder'}})">
+				<view class="child" @click="Router.navigateTo({route:{path:'/pages/myOrder/myOrder?current=1'}})">
 					<image src="../../static/images/about-icon1.png"></image>
 					<view>未支付</view>
 				</view>
-				<view class="child" @click="Router.navigateTo({route:{path:'/pages/myOrder/myOrder'}})">
+				<view class="child" @click="Router.navigateTo({route:{path:'/pages/myOrder/myOrder?current=2'}})">
 					<image src="../../static/images/about-icon2.png"></image>
 					<view>已支付</view>
 				</view>
-				<view class="child" @click="Router.navigateTo({route:{path:'/pages/myOrder/myOrder'}})">
+				<view class="child" @click="Router.navigateTo({route:{path:'/pages/myOrder/myOrder?current=3'}})">
 					<image src="../../static/images/about-icon3.png"></image>
-					<view>以完成</view>
+					<view>已完成</view>
 				</view>
 			</view>
 		</view>
 		
 		<view class="XlineNav">
-			<view class="info bg1"  @click="Router.navigateTo({route:{path:'/pages/myVIP/myVIP'}})">
+			<view class="info bg1" v-if="mainData.order&&mainData.order.length==0"  @click="Router.navigateTo({route:{path:'/pages/myVIP/myVIP'}})">
+				<view class="ilblock listimg">
+					<image src="../../static/images/about-icon4.png"></image>
+				</view>
+				<view class="ilblock">我的会员</view>
+				<image class="arrow" src="../../static/images/arrow-icon1.png" ></image>
+			</view>
+			<view class="info bg1" v-if="mainData.order&&mainData.order.length>0"  @click="Router.navigateTo({route:{path:'/pages/myVIPcard/myVIPcard'}})">
 				<view class="ilblock listimg">
 					<image src="../../static/images/about-icon4.png"></image>
 				</view>
@@ -103,34 +110,46 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{}
+				mainData:{}
 			}
 		},
+		
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
 
 			getMainData() {
 				const self = this;
 				console.log('852369')
+				var now = Date.parse(new Date())/1000;
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-
+				postData.getAfter = {
+					order:{
+						tableName:'Order',
+						middleKey:'user_no',
+						key:'user_no',
+						searchItem:{
+							status:1,
+							invalid_time:['>',now],
+							pay_status: 1,
+							type:2
+						},
+						condition:'='
+					}
+				};
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+						self.mainData = res.info.data[0];
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};
-					self.$Utils.finishFunc('getMainData');
-
+					self.$Utils.finishFunc('getMainData');		
 				};
-				self.$apis.orderGet(postData, callback);
-
+				self.$apis.userInfoGet(postData, callback);
 			},
 
 		},

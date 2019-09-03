@@ -6,30 +6,31 @@
 				<view class="eidt-line">
 					<view class="ll">持卡人：</view>
 					<view class="rr">
-						<input type="text" placeholder="请输入持卡人姓名">
+						<input type="text" placeholder="请输入持卡人姓名" v-model="submitData.bank_name">
 					</view>
 				</view>
 				<view class="eidt-line">
 					<view class="ll">手机号:</view>
 					<view class="rr">
-						<input type="number" placeholder="请输入手机号码" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')" >
+						<input type="number" placeholder="请输入手机号码"  v-model="submitData.bank_phone" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')" >
 					</view>
 				</view>
 				<view class="eidt-line">
 					<view class="ll">开户行：</view>
 					<view class="rr">
-						<input type="text" placeholder="请输入您的银行卡的开户行" >
+						<input type="text" placeholder="请输入您的银行卡的开户行" v-model="submitData.bank">
 					</view>
 				</view>
 				
 				<view class="eidt-line">
 					<view class="ll">银行卡号：</view>
 					<view class="rr">
-						<input type="number" placeholder="请输入您的银行卡号" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')" >
+						<input type="number" placeholder="请输入您的银行卡号" v-model="submitData.bank_id" 
+						onkeyup="this.value=this.value.replace(/\D/g,'')" >
 					</view>
 				</view>
 				
-				<view class="submitbtn" style="margin-top: 300rpx;" @click="webSelf.$Router.navigateTo({route:{path:'/pages/myCashOut/myCashOut'}})">
+				<view class="submitbtn" style="margin-top: 300rpx;" @click="Utils.stopMultiClick(submit)">
 					<button type="submit" >确定</button>
 				</view>
 			</form>
@@ -44,35 +45,75 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{},
+				Utils:this.$Utils,
+				submitData:{
+					bank:'',
+					bank_id:'',
+					bank_name:'',
+					bank_phone:''
+				}
 				
 			}
 		},
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getUserInfoData'], self);
 		},
 		methods: {
 
-			getMainData() {
+			getUserInfoData() {
 				const self = this;
 				console.log('852369')
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+						self.userInfoData = res.info.data[0];
+						self.submitData.bank = self.userInfoData.bank;
+						self.submitData.bank_id = self.userInfoData.bank_id;
+						self.submitData.bank_name = self.userInfoData.bank_name;
+						self.submitData.bank_phone = self.userInfoData.bank_phone;
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};
-					self.$Utils.finishFunc('getMainData');
-
+					self.$Utils.finishFunc('getUserInfoData');	
 				};
-				self.$apis.orderGet(postData, callback);
-
+				self.$apis.userInfoGet(postData, callback);
+			},
+			
+			submit() {
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				const pass = self.$Utils.checkComplete(self.submitData);
+				console.log('pass', pass)
+				console.log('self.submitData',self.submitData)
+				if (pass) {
+					
+					self.userInfoUpdate()
+				} else {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('请输入提现金额', 'none')
+				};
+			},
+			
+			userInfoUpdate() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.data = self.$Utils.cloneForm(self.submitData);
+				const callback = (res) => {
+					if (res.solely_code == 100000) {
+						self.$Utils.showToast('操作成功', 'none')
+						setTimeout(function() {
+							uni.navigateBack({
+								delta:1
+							})
+						}, 800);
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+				};
+				self.$apis.userInfoUpdate(postData, callback);
 			},
 
 		},

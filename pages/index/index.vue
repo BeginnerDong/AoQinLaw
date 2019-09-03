@@ -16,7 +16,11 @@
 
 		<!-- 八个导航 -->
 		<view class="indHome">
-			<view class="circel-nav ilblock">
+			<button class="circel-nav ilblock" v-if="userInfoData.order&&userInfoData.order.length>0" open-type="contact" style="outline: none;line-height: 1.3;overflow: initial;background: #fff;border: none;">
+				<image src="../../static/images/home-icon1.png"></image>
+				<view class="color2 font13">在线咨询</view>
+			</button>
+			<view class="circel-nav ilblock" @click="showToast" v-if="userInfoData.order&&userInfoData.order.length==0">
 				<image src="../../static/images/home-icon1.png"></image>
 				<view class="color2 font13">在线咨询</view>
 			</view>
@@ -73,7 +77,7 @@
 			<view class="more" @click="Router.navigateTo({route:{path:'/pages/legalAdvice/legalAdvice'}})">更多&gt;</view>
 		</view>
 		<view class="fvzixun palr4">
-			<view class="zixunLis" v-for="(item,index) in consultData" :key="index">
+			<view class="zixunLis" v-for="(item,index) in consultData" :key="index" v-if="index<3">
 				<view class="one">
 					<view class="photo">
 						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
@@ -97,13 +101,11 @@
 							</view>
 							<view class="rr flexRowBetween starClass">
 								<view class="starBox">
-									<image src="../../static/images/home-icon12.png" mode=""></image>
-									<image src="../../static/images/home-icon12.png" mode=""></image>
-									<image src="../../static/images/home-icon12.png" mode=""></image>
-									<image src="../../static/images/home-icon13.png" mode=""></image>
-									<image src="../../static/images/home-icon11.png" mode=""></image>
+									<image v-for="c_item in stars" :src="item.score/2 > c_item ?(item.score/2-c_item == 0.5?halfSrc:selectedSrc) : normalSrc" mode="">
+									
+									</image>
 								</view>
-								<view>9.5分</view>
+								<view>{{item.score}}分</view>
 							</view>
 						</view>
 						<view class="line2">{{item.passage2}}</view>
@@ -127,7 +129,7 @@
 		
 		<view class="newslisbox">
 			<view class="newslis" v-for="(item,index) in articleData" :key="index"  
-			@click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails'}})">
+			@click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails?id='+item.id}})" v-if="index<4">
 				<view class="twoCt flexRowBetween">
 					<view class="leftbox">
 						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
@@ -182,54 +184,56 @@
 				labelData: {},
 				productData:[],
 				articleData:[],
-				zixunLis:[
-					{
-						questioner_photo:'../../static/images/home-img2.png',
-						question_name:"张胜兰",
-						question_phone:"15623020235",
-						question:"问题问题问题问题问题问题问题问题问题问题问题问题问题问题",
-						answer_photo:"../../static/images/tean-img.png",
-						answer_name:"王律师",
-						answer:"答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案",
-						answer_label:"婚姻问题",
-						answer_time:"2019年8月24日"
-						
-					},
-					{
-						questioner_photo:'../../static/images/tean-img.png',
-						question_name:"李云海",
-						question_phone:"15623028888",
-						question:"2问题问题问题问题问题问题问题问题问题问题问题问题问题问题",
-						answer_photo:"../../static/images/home-img2.png",
-						answer_name:"刘律师",
-						answer:"答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案",
-						answer_label:"婚姻问题",
-						answer_time:"2019年8月22日"
-					},
-					{
-						questioner_photo:'../../static/images/home-img2.png',
-						question_name:"张胜兰",
-						question_phone:"15623020235",
-						question:"问题问题问题问题问题问题问题问题问题问题问题问题问题问题",
-						answer_photo:"../../static/images/tean-img.png",
-						answer_name:"王律师",
-						answer:"答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案答案",
-						answer_label:"婚姻问题",
-						answer_time:"2019年8月24日"
-						
-					}
-				],
-				consultData:[]
-				
-				
+				userInfoData:{},
+				consultData:[],
+				stars: [0, 1, 2, 3, 4],
+				normalSrc: '../../static/images/home-icon11.png',
+				selectedSrc: '../../static/images/home-icon12.png',
+				halfSrc: '../../static/images/home-icon13.png',
 			}
 		},
 		
 		onLoad() {
 			const self = this;
-			self.$Utils.loadAll(['getLabelData','getProductData','getArticleData','getConsultData'], self);
+			self.$Utils.loadAll(['getUserInfoData','getLabelData','getProductData','getArticleData','getConsultData'], self);
 		},
 		methods: {
+			
+			showToast(){
+				const self = this;
+				self.$Utils.showToast('您还不是会员', 'none')
+			},
+			
+			getUserInfoData() {
+				const self = this;
+				console.log('852369')
+				var now = Date.parse(new Date())/1000;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.getAfter = {
+					order:{
+						tableName:'Order',
+						middleKey:'user_no',
+						key:'user_no',
+						searchItem:{
+							status:1,
+							invalid_time:['>',now],
+							pay_status: 1,
+							type:2
+						},
+						condition:'='
+					}
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000 && res.info.data[0]) {
+						self.userInfoData = res.info.data[0];
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserInfoData');		
+				};
+				self.$apis.userInfoGet(postData, callback);
+			},
 
 			getLabelData() {
 				const self = this;
@@ -347,6 +351,8 @@
 	page {
 		padding-bottom: 140rpx;
 	}
-	
+	button::after{
+		border:none
+	}
 
 </style>

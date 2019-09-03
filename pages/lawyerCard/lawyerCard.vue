@@ -33,8 +33,8 @@
 					</view>
 				</view>
 				<view class="rr_btn">
-					<view>同步到通讯录</view>
-					<view class="bj">分享名片</view>
+					<view @click="addContact">同步到通讯录</view>
+					<view class="bj" open-type="share">分享名片</view>
 				</view>
 			</view>
 		</view>
@@ -47,13 +47,15 @@
 			</view>
 			<view class="msglist">
 				<view class="tit">手机</view>
-				<view class="text">{{mainData.contactPhone}}</view>
-				<view class="see">查看</view>
+				<view class="text">{{showPhone?mainData.contactPhone:'********'}}</view>
+				<view class="see" @click="showPhoneOrWechat('phone')">查看</view>
+				<view class="see" v-if="showPhone" @click="callPhone()">打电话</view>
 			</view>
 			<view class="msglist">
 				<view class="tit">微信</view>
-				<view class="text">{{mainData.wechat}}</view>
-				<view class="see">查看</view>
+				<view class="text">{{showWechat?mainData.wechat:'********'}}</view>
+				<view class="see" @click="showPhoneOrWechat('wechat')">查看</view>
+				<view class="see" v-if="showWechat" @click="copyBtn()">加微信</view>
 			</view>
 			<view class="msglist">
 				<view class="tit">邮箱</view>
@@ -85,15 +87,10 @@
 				照片展示
 			</view>
 			<view class="photoShow">
-				<view class="item">
-					<image src="../../static/images/card-img1.png" mode=""></image>
+				<view class="item" v-for="item in mainData.bannerImg">
+					<image :src="item.url" mode=""></image>
 				</view>
-				<view class="item">
-					<image src="../../static/images/card-img1.png" mode=""></image>
-				</view>
-				<view class="item">
-					<image src="../../static/images/card-img1.png" mode=""></image>
-				</view>
+				
 			</view>
 			
 		</view>
@@ -108,25 +105,125 @@
 			return {
 				Router:this.$Router,
 				mainData:{},
-				lawyerList:[
-					{
-						photoImg:'../../static/images/lvshi-img1.png',
-						name:"张胜男",
-						lable:"诉讼律师",
-						workTime:"5年",
-						score:"8.5",
-						c_item:["刑事诉讼","债权债务"]
-					}
-				]
+				userInfoData:{},
+				showPhone:false,
+				showWechat:false
 			}
 		},
 		onLoad(options) {
 			const self = this;
 			self.id = options.id;
-			self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData','getUserInfoData'], self);
 		},
 		
 		methods: {
+			
+			addContact(){
+			  const self = this;
+			    wx.addPhoneContact({
+			      firstName: self.mainData.title,
+			      mobilePhoneNumber: self.mainData.contactPhone,
+			      success:function(){
+			          console.log('添加成功')
+			      }
+			  })
+			},
+			
+			showPhoneOrWechat(type){
+				const self = this;
+				if(self.userInfoData.order.length>0){
+					if(type=='phone'){
+						self.showPhone = true
+					}else if(type=='wechat'){
+						self.showWechat = true
+					}
+				}else{
+					self.$Utils.showToast('您还不是会员', 'none')
+				}				
+			},
+			
+			callPhone(){
+			  const self = this;
+			  wx.makePhoneCall({
+			    phoneNumber: self.mainData.contactPhone,
+			  })
+			},
+			
+			copyBtn(e) {
+			  const self = this;
+			  wx.setClipboardData({
+			    data: self.mainData.wechat,
+			    success: function (res) {
+			      wx.showToast({
+			        title: '复制成功',
+			      });
+			    }
+			  });
+			},
+			
+			onShareAppMessage(res){
+			  const self = this;
+			    
+			    return {
+			      title: '澳秦法律',
+			      path: 'pages/lawyerCard/lawyerCard',
+			      success: function (res){
+			        console.log(res);
+			        console.log(parentNo)
+			        if(res.errMsg == 'shareAppMessage:ok'){
+			          console.log('分享成功')
+			          if (self.data.shareBtn){
+			            if(res.hasOwnProperty('shareTickets')){
+			            console.log(res.shareTickets[0]);
+			              self.data.isshare = 1;
+			            }else{
+			              self.data.isshare = 0;
+			            }
+			          }
+			        }else{
+			          wx.showToast({
+			            title: '分享失败',
+			          })
+			          self.data.isshare = 0;
+			        }
+			      },
+			      fail: function(res) {
+			        console.log(res)
+			      }
+			    }
+			},
+			
+			getUserInfoData() {
+				const self = this;
+				console.log('852369')
+				var now = Date.parse(new Date())/1000;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.getAfter = {
+					order:{
+						tableName:'Order',
+						middleKey:'user_no',
+						key:'user_no',
+						searchItem:{
+							status:1,
+							invalid_time:['>',now],
+							pay_status: 1,
+							type:2
+						},
+						condition:'='
+					}
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000 && res.info.data[0]) {
+						self.userInfoData = res.info.data[0];
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserInfoData');		
+				};
+				self.$apis.userInfoGet(postData, callback);
+			},
+			
 			
 			getMainData() {
 				const self = this;
@@ -146,6 +243,8 @@
 				};
 				self.$apis.articleGet(postData, callback);
 			},
+			
+			
 
 		},
 	};

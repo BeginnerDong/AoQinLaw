@@ -177,7 +177,7 @@
 									}, 800)
 								};
 							};
-							self.$apis.realPay(res.info, payCallback);
+							self.$Utils.realPay(res.info, payCallback);
 						}
 					} else {
 						uni.setStorageSync('canClick', true);

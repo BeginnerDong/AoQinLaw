@@ -1,43 +1,26 @@
 <template>
 	<view>
 		<view class="vipCard">
-			<image src="../../static/images/vip-img1.png" mode=""></image>
+			<image :src="cardData.mainImg&&cardData.mainImg[0]?cardData.mainImg[0].url:''" mode=""></image>
 		</view>
 		
 		<view class="msg pdlr4">
 			<view class="tit">服务说明</view>
 			<view class="content ql-editor">
-				<view>1、内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
-				<view>2、内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
-				<view>3、内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容；</view>
+				<view class="content ql-editor" v-html="cardData.content">
+				</view>
 			</view>
 		</view>
 		<view class="f5H10"></view>
 		<view class="pdlr4 seviceNum">
 			<view class="tit">已使用服务次数</view>
-			<view class="lis flexRowBetween">
-				<view class="">会员咨询</view>
-				<view class="nmb">8次</view>
+			<view class="lis flexRowBetween" v-for="item in serviceData">
+				<view class="">{{item.snap_product.title}}</view>
+				<view class="nmb">{{item.hasUse}}次</view>
 			</view>
-			<view class="lis flexRowBetween">
-				<view class="">撰写合同</view>
-				<view class="nmb">8次</view>
-			</view>
-			<view class="lis flexRowBetween">
-				<view class="">民事诉讼</view>
-				<view class="nmb">8次</view>
-			</view>
-			<view class="lis flexRowBetween">
-				<view class="">标准化催收服务</view>
-				<view class="nmb">8次</view>
-			</view>
+			
 		</view>
 		
-		<view class="submitbtn" style="margin: 100rpx auto 0 auto">
-			<button type="submit" @click="Utils.stopMultiClick(submit)">立即购买</button>
-		</view>
-
-
 	</view>
 </template>
 
@@ -52,7 +35,9 @@
 				autoplay: false,
 				interval: 2000,
 				duration: 500,
-				currentIndex:0
+				currentIndex:0,
+				cardData:{},
+				serviceData:[]
 			}
 		},
 		
@@ -63,110 +48,40 @@
 		
 		methods: {
 			
-			changeIndex(e){
-				const self = this;
-				self.currentIndex = e.detail.current;
-				console.log(e)
-			},
+			
 
 			getMainData() {
 				const self = this;
 				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
 				postData.searchItem = {
 					thirdapp_id:2,
 					type:2,
+					pay_status:1
 				};	
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
-						self.mainData.push.apply(self.mainData, res.info.data);
+						self.mainData = res.info.data[0];
+						for (var i = 0; i < self.mainData.products.length; i++) {
+							if(self.mainData.products[i].behavior==1){
+								self.cardData = self.mainData.products[i].snap_product
+							};
+							if(self.mainData.products[i].behavior==2){
+								self.serviceData.push(self.mainData.products[i])
+							}
+						};
+						for (var i = 0; i < self.serviceData.length; i++) {
+							self.serviceData[i].hasUse = self.serviceData[i].total - self.serviceData[i].rest
+						}
+						console.log('self.serviceData',self.serviceData)
 					} else {
 						self.$Utils.showToast('没有更多了', 'none');
 					};
 					self.$Utils.finishFunc('getMainData');
 				};
-				self.$apis.productGet(postData, callback);
+				self.$apis.orderGet(postData, callback);
 			},
 			
-			submit() {
-				const self = this;
-				uni.setStorageSync('canClick', false);
-				/* const callback = (user, res) => {
-					self.addOrder();
-				};
-				api.getAuthSetting(callback); */
-				self.addOrder();
-			},
-			
-			
-			addOrder() {
-				const self = this;
-				const orderList = [{
-					product: [],
-					type: 2
-				}];
-			
-				orderList[0].product.push({
-					id: self.mainData[self.currentIndex].id,
-					count: 1
-				}, );
-				if (!self.order_id) {
-					const postData = {
-						tokenFuncName: 'getProjectToken',
-						orderList: orderList,
-					};
-					console.log('addOrder', self.addressData)
-			
-					const callback = (res) => {
-						if (res && res.solely_code == 100000) {
-							self.order_id = res.info.id
-							self.pay(self.order_id);
-						}else{
-							uni.setStorageSync('canClick', true);
-							self.$Units.showToast(res.msg,'none')
-						}
-					};
-					self.$apis.addOrder(postData, callback);
-				} else {
-					self.pay(self.order_id)
-				}
-			},
-			
-			
-			
-			
-			pay() {
-				const self = this;
-				var order_id = self.order_id;
-				const postData = {
-					tokenFuncName: 'getProjectToken',
-					searchItem: {
-						id: order_id,
-					},
-					/* score:self.mainData[self.currentIndex].price */
-					wxPay: {
-						price: self.mainData[self.currentIndex].price
-					}
-				};
-				const callback = (res) => {
-					if (res.solely_code == 100000) {
-						uni.setStorageSync('canClick', true);
-						if (res.info) {
-							const payCallback = (payData) => {
-								if (payData == 1) {
-									self.$Units.showToast('购买成功', 'none');
-									setTimeout(function() {
-										Router.reLaunch({route:{path:'/pages/indx/indx'}})
-									}, 800)
-								};
-							};
-							self.$apis.realPay(res.info, payCallback);
-						}
-					} else {
-						self.$Units.showToast('支付失败', 'none')
-					}
-				};
-				self.$apis.pay(postData, callback);
-			},
 			
 			
 

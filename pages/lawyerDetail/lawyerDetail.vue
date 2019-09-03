@@ -15,13 +15,17 @@
 						执业{{mainData.small_title}}年
 						<view class="flexRowBetween starClass" style="margin-left: 10rpx;">
 							<view class="starBox">
-								<image src="../../static/images/home-icon12.png" mode=""></image>
+								<!-- <image src="../../static/images/home-icon12.png" mode=""></image>
 								<image src="../../static/images/home-icon12.png" mode=""></image>
 								<image src="../../static/images/home-icon12.png" mode=""></image>
 								<image src="../../static/images/home-icon13.png" mode=""></image>
-								<image src="../../static/images/home-icon11.png" mode=""></image>
+								<image src="../../static/images/home-icon11.png" mode=""></image> -->
+								<image v-for="item in stars" :src="averageScore > item ?(averageScore-item == 0.5?halfSrc:selectedSrc) : normalSrc" mode="">
+
+								</image>
 							</view>
-							<view>8.5分</view>
+							<view v-if="messageData.length>0">{{averageScore*2?averageScore*2:'0'}}分</view>
+							<view v-if="messageData.length==0">暂无评分</view>
 						</view>
 					</view>
 					<view class="three" style="margin-top: 40rpx;">
@@ -75,7 +79,12 @@
 				Router:this.$Router,
 				mainData:{},
 				num:1,		
-				messageData:[]
+				messageData:[],
+				averageScore:0,
+				stars: [0, 1, 2, 3, 4],
+				normalSrc: '../../static/images/home-icon11.png',
+				selectedSrc: '../../static/images/home-icon12.png',
+				halfSrc: '../../static/images/home-icon13.png',
 			}
 		},
 		onLoad(options) {
@@ -140,6 +149,13 @@
 				postData.searchItem = {
 					relation_id:self.id,					
 				};
+				postData.compute = {
+				  totalCount:[
+					'sum',
+					'score',
+					{relation_id:self.id}
+				  ],  
+				};
 				postData.getAfter = {
 					user: {
 						tableName: 'User',
@@ -154,8 +170,9 @@
 				};
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
-						self.messageData.push.apply(self.messageData, res.info.data);
+						self.messageData.push.apply(self.messageData, res.info.data);					
 					}
+					self.averageScore = res.info.compute.totalCount/self.messageData.length
 					self.$Utils.finishFunc('getMessageData');
 				};
 				self.$apis.messageGet(postData, callback);

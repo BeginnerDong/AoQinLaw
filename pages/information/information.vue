@@ -1,8 +1,8 @@
 <template>
 	<view>
 		<view class="newslisbox">
-			<view class="newslis" v-for="(item,index) in articleData" :key="index"  >
-				<view class="twoCt flexRowBetween" @click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails'}})">
+			<view class="newslis" v-for="(item,index) in mainData" :key="index"  >
+				<view class="twoCt flexRowBetween" @click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails?id='+item.id}})">
 					<view class="leftbox">
 						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
 					</view>
@@ -27,76 +27,30 @@
 		data() {
 			return {
 				Router:this.$Router,
-				labelData: {},
-				productData:[],
-				articleData:[],
-				consultData:[]
+				mainData:[]
 			}
 		},
 		
 		onLoad() {
 			const self = this;
-			self.$Utils.loadAll(['getLabelData','getProductData','getArticleData','getConsultData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
 
-			getLabelData() {
-				const self = this;
-				const postData = {
-					searchItem: {
-						thirdapp_id: 2,
-						title:'首页轮播图'
-					},
-				};
-				console.log('postData', postData)
-				const callback = (res) => {
-					if (res.info.data.length > 0) {
-						self.labelData = res.info.data[0].mainImg
-					}
-					console.log('res', res)
-					self.$Utils.finishFunc('getLabelData');
 			
-				};
-				self.$apis.labelGet(postData, callback);
-			},
 			
-			getProductData() {
-				const self = this;
-				const postData = {
-					searchItem: {
-						thirdapp_id: 2,
-						type:1
-					},
-				};
-				console.log('postData', postData)
-				const callback = (res) => {
-					if (res.info.data.length > 0) {
-						self.productData.push.apply(self.productData,res.info.data)
-					}
-					console.log('res', res)
-					self.$Utils.finishFunc('getProductData');
-			
-				};
-				self.$apis.productGet(postData, callback);
-			},
-			
-					
-			getConsultData() {
-				const self = this;
-				const postData = {};
-				postData.searchItem = {
-					thirdapp_id:2
-				};
-				const callback = (res) => {
-					if (res.info.data.length > 0) {
-						self.consultData.push.apply(self.consultData, res.info.data);
-					}
-					self.$Utils.finishFunc('getConsultData');
-				};
-				self.$apis.articleGet(postData, callback);
-			},
-			
-			getArticleData() {
+			getMainData() {
 				const self = this;
 				const postData = {};
 				postData.searchItem = {
@@ -115,9 +69,9 @@
 				};
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
-						self.articleData.push.apply(self.articleData, res.info.data);
+						self.mainData.push.apply(self.mainData, res.info.data);
 					}
-					self.$Utils.finishFunc('getArticleData');
+					self.$Utils.finishFunc('getMainData');
 				};
 				self.$apis.articleGet(postData, callback);
 			},

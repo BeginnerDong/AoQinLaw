@@ -1,41 +1,22 @@
 <template>
 	<view class="myCace pdlr4">
-		<view class="item">
-			<view  @click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
-				<view>标题标题标题标题标题标题标题标题</view>
-				<view class="tag ok">已解决</view>
+		<view class="item" v-for="item in mainData">
+			<view  @click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail?id='+item.id}})">
+				<view class="avoidOverflow">{{item.products[0].snap_product.product.title}}</view>
+				<view class="tag ok" v-if="item.transport_status==2">已解决</view>
+				<view class="tag ing" v-if="item.transport_status==1">解决中</view>
+				<view class="tag no" v-if="item.transport_status==0">未解决</view>
 				<view class="lable flexRowBetween">
-					<view class="left">刑事类</view>
-					<view class="right">2019年8月27日</view>
+					<!-- <view class="left">刑事类</view> -->
+					<view class="right">{{item.create_time}}</view>
 				</view>
-				<view class="info">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</view>
+				<view class="info">{{item.description}}</view>
 			</view>
-			<view style="display: flex; justify-content: flex-end;padding-top: 20rpx;">
-				<view class="plBtn" @click="Router.navigateTo({route:{path:'/pages/myCasePjDetail/myCasePjDetail'}})">评论服务</view>
+			<view style="display: flex; justify-content: flex-end;padding-top: 20rpx;" v-if="item.products[0].isremark==0&&item.transport_status==2">
+				<view class="plBtn" @click="Router.navigateTo({route:{path:'/pages/myCasePjDetail/myCasePjDetail?id='+item.id}})">评论服务</view>
 			</view>
 		</view>
-		<view class="item">
-			<view @click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
-				<view>标题标题标题标题标题标题标题标题</view>
-				<view class="tag ing">解决中</view>
-				<view class="lable flexRowBetween">
-					<view class="left">刑事类</view>
-					<view class="right">2019年8月27日</view>
-				</view>
-				<view class="info">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</view>
-			</view>
-		</view>
-		<view class="item">
-			<view @click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail'}})">
-				<view>标题标题标题标题标题标题标题标题</view>
-				<view class="tag no">未解决</view>
-				<view class="lable flexRowBetween">
-					<view class="left">刑事类</view>
-					<view class="right">2019年8月27日</view>
-				</view>
-				<view class="info">内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容</view>
-			</view>
-		</view>
+		
 		
 
 	</view>

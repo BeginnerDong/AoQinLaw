@@ -90,7 +90,7 @@
 
 /* 大星星 */
 .starBigBox{ display: flex;flex-direction: row; justify-content: flex-end; align-items: center; }
-.starBigBox image{width: 36rpx; height: 36rpx; margin:0 10rpx;}
+.starBigBox image{width: 40rpx; height: 40rpx;}
 
 
 .flexRowBetween{

@@ -15,12 +15,12 @@
 		
 		<view class="msg pdlr4">
 			<view class="tit">服务说明</view>
-			<view class="content ql-editor" v-html="mainData[currentIndex].content">
+			<view class="content ql-editor" v-html="mainData[currentIndex]?mainData[currentIndex].content:''">
 			</view>
 		</view>
 		
 		<view class="submitbtn" style="margin: 100rpx auto 0 auto">
-			<button type="submit" @click="Utils.stopMultiClick(submit)">立即购买</button>
+			<button type="submit" open-type="getUserInfo"  @getuserinfo="Utils.stopMultiClick(submit)">立即购买</button>
 		</view>
 
 	</view>
@@ -53,6 +53,33 @@
 				self.currentIndex = e.detail.current;
 				console.log(e)
 			},
+			
+			getUserInfoData() {
+				const self = this;
+				console.log('852369')
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.getAfter = {
+					parent:{
+						tableName:'Distribution',
+						middleKey:'user_no',
+						key:'child_no',
+						searchItem:{
+							status:1,
+						},
+						condition:'='
+					}
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000 && res.info.data[0]) {
+						self.userInfoData = res.info.data[0];
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserInfoData');		
+				};
+				self.$apis.userInfoGet(postData, callback);
+			},
 
 			getMainData() {
 				const self = this;
@@ -75,11 +102,10 @@
 			submit() {
 				const self = this;
 				uni.setStorageSync('canClick', false);
-				/* const callback = (user, res) => {
+				const callback = (user, res) => {
 					self.addOrder();
 				};
-				api.getAuthSetting(callback); */
-				self.addOrder();
+				self.$Utils.getAuthSetting(callback);
 			},
 			
 			
@@ -107,7 +133,7 @@
 							self.pay(self.order_id);
 						}else{
 							uni.setStorageSync('canClick', true);
-							self.$Units.showToast(res.msg,'none')
+							self.$Utils.showToast(res.msg,'none')
 						}
 					};
 					self.$apis.addOrder(postData, callback);
@@ -127,27 +153,45 @@
 					searchItem: {
 						id: order_id,
 					},
-					/* score:self.mainData[self.currentIndex].price */
 					wxPay: {
 						price: self.mainData[self.currentIndex].price
 					}
 				};
+				postData.payAfter = [];
+				var ratio = wx.getStorageSync('user_info').thirdApp.ratio;
+				if (self.userInfoData&&self.userInfoData.behavior==0&&self.data.userInfoData.parent.length>0) {
+					if (self.mainData[self.currentIndex].price > 0 && ratio>0) {
+						postData.payAfter.push({
+							tableName: 'FlowLog',
+							FuncName: 'add',
+							data: {
+								relation_user: wx.getStorageSync('user_info').user_no,
+								count: self.mainData[self.currentIndex].price*(ratio/100),
+								trade_info: '下级消费返佣',
+								user_no: self.data.userInfoData.parent[0].parent_no,
+								type: 2,
+								thirdapp_id: 2,
+							}
+						});
+					};
+				}
+				
 				const callback = (res) => {
 					if (res.solely_code == 100000) {
 						uni.setStorageSync('canClick', true);
 						if (res.info) {
 							const payCallback = (payData) => {
 								if (payData == 1) {
-									self.$Units.showToast('购买成功', 'none');
+									self.$Utils.showToast('购买成功', 'none');
 									setTimeout(function() {
-										Router.reLaunch({route:{path:'/pages/indx/indx'}})
+										self.Router.reLaunch({route:{path:'/pages/user/user'}})
 									}, 800)
 								};
 							};
-							self.$apis.realPay(res.info, payCallback);
+							self.$Utils.realPay(res.info, payCallback);
 						}
 					} else {
-						self.$Units.showToast('支付失败', 'none')
+						self.$Utils.showToast('支付失败', 'none')
 					}
 				};
 				self.$apis.pay(postData, callback);

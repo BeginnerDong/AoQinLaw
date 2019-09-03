@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="teamTop">
-			<view class="money">2635.00</view>
+			<view class="money">{{userInfoData.balance}}</view>
 			<view class="yuan">总金额(元)</view>
 			<view class="txBtn" @click="Router.navigateTo({route:{path:'/pages/myCashOut/myCashOut'}})">提现</view>
 			<!-- myCashOut -->
@@ -16,27 +16,27 @@
 			<view class="item flexRowBetween" v-for="(item,index) in rewardData" :key="index">
 				<view class="left flexRowBetween">
 					<view class="photo">
-						<image :src="item.photoUrl"></image>
+						<image :src="item.user.headImgUrl"></image>
 					</view>
 					<view class="cont">
-						<view>{{item.name}}</view>
-						<view class="data red">{{item.time}}</view>
+						<view>{{item.user.nickname}}</view>
+						<view class="data red">{{item.create_time}}</view>
 					</view>
 				</view>
-				<view class="right red">{{item.price}}</view>
+				<view class="right red">{{item.count}}</view>
 			</view>
 		</view>
 		<view class="teamBox1" v-if="num==2">
-			<view class="item flexRowBetween" v-for="(item,index) in memberDta" :key="index">
+			<view class="item flexRowBetween" v-for="(item,index) in teamData" :key="index">
 				<view class="left flexRowBetween">
 					<view class="photo">
-						<image :src="item.photoUrl"></image>
+						<image :src="item.user.headImgUrl"></image>
 					</view>
 					<view class="cont">
-						<view>{{item.name}}</view>
+						<view>{{item.user.nickname}}</view>
 					</view>
 				</view>
-				<view class="right" style="color: #666; font-size: 26rpx;">{{item.time}}</view>
+				<view class="right" style="color: #666; font-size: 26rpx;">{{item.create_time}}</view>
 			</view>
 		</view>
 		
@@ -48,11 +48,11 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{},
+				userInfoData:{},
 				num:1,
-				rewardData:[
+				rewardData:[],
+				teamData:[],
+				rewardData1:[
 					{
 						photoUrl:"../../static/images/tean-img.png",
 						name:"昵称昵称昵称",
@@ -93,33 +93,119 @@
 		},
 		onLoad() {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.paginateTwo = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getUserInfoData','getRewardData','getTeamData'], self);
 		},
 		methods: {
+			
 			change(num){
 				const self = this;
 				if(num!= self.num){
 					self.num = num
 				}
 			},
-			getMainData() {
+			
+			onReachBottom() {
+				console.log('onReachBottom')
+				const self = this;
+				if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {				
+					if(self.num==1){
+						self.paginate.currentPage++;
+						self.getRewardData()
+					}else{
+						self.paginateTwo.currentPage++;
+						self.getTeamData()
+					}
+				};
+			},
+			
+			getUserInfoData() {
 				const self = this;
 				console.log('852369')
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
-						self.mainData = res.info.data;
+						self.userInfoData = res.info.data[0];
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};
-					self.$Utils.finishFunc('getMainData');
+					self.$Utils.finishFunc('getUserInfoData');
 
 				};
-				self.$apis.orderGet(postData, callback);
-
+				self.$apis.userInfoGet(postData, callback);
 			},
+			
+			
+			
+			getTeamData() {
+				const self = this;
+				const postData = {};
+				postData.paginate = self.$Utils.cloneForm(self.paginateTwo);
+				postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					parent_no:wx.getStorageSync('user_info').user_no
+				};
+				postData.getAfter = {
+					user:{
+						tableName:'User',
+						middleKey:'user_no',
+						key:'user_no',
+						searchItem:{
+							status:1
+						},
+						condition:'=',
+						info:['nickname','headImgUrl']
+					}
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000) {			
+						if (res.info.data.length > 0) {
+							self.teamData.push.apply(self.teamData, res.info.data);
+						}
+					} else {
+						self.$Utils.showToast('网络故障', 'none')
+					};
+					self.$Utils.finishFunc('getTeamData');
+				};
+				self.$apis.distriGet(postData, callback);
+			},
+			
+			getRewardData() {
+				const self = this;
+				const postData = {};
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					type:2
+				};
+				postData.getAfter = {
+					user:{
+						tableName:'User',
+						middleKey:'relation_user',
+						key:'user_no',
+						searchItem:{
+							status:1
+						},
+						condition:'=',
+						info:['nickname','headImgUrl']
+					}
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000) {			
+						if (res.info.data.length > 0) {
+							self.rewardData.push.apply(self.rewardData, res.info.data);
+						}
+					} else {
+						self.$Utils.showToast('网络故障', 'none')
+					};
+					self.$Utils.finishFunc('getRewardData');
+				};
+				self.$apis.flowLogGet(postData, callback);
+			},
+			
+			
 
 		},
 	};

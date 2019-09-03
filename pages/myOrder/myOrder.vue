@@ -26,7 +26,7 @@
 					<view class="bBtn red">
 						<view>总金额：</view>
 						<view class="price">{{item.price}}</view>
-						<view class="btn gopay" @click="pay(index)">去支付</view>
+						<view class="btn gopay" v-if="item.pay_status==0" @click="pay(index)">去支付</view>
 					</view>
 				</view>
 				
@@ -48,10 +48,15 @@
 				}
 			}
 		},
-		onLoad() {
+		onLoad(options) {
 			const self = this;
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-			self.$Utils.loadAll(['getMainData'], self);
+			if(options.current){
+				self.change(options.current)
+			}else{
+				self.$Utils.loadAll(['getMainData'], self);
+			}
+			
 		},
 		
 		onReachBottom() {
@@ -71,13 +76,13 @@
 				if(current!=self.current){
 					self.current = current
 					if (current == '1') {
-						self.data.searchItem.pay_status = '0';
+						self.searchItem.pay_status = '0';
 					} else if (current == '2') {
-						self.data.searchItem.pay_status = '1';
+						self.searchItem.pay_status = '1';
 								
 					} else if (current == '3') {
-						self.data.searchItem.pay_status = '1';
-						self.data.searchItem.transport_status  = '2';
+						self.searchItem.pay_status = '1';
+						self.searchItem.transport_status  = '2';
 					} 
 					self.getMainData(true)
 				}
@@ -140,7 +145,7 @@
 									self.getMainData(true);
 								};
 							};
-							self.$apis.realPay(res.info, payCallback);
+							self.$Utils.realPay(res.info, payCallback);
 						}
 					} else {
 						self.$Utils.showToast(res.msg, 'none')

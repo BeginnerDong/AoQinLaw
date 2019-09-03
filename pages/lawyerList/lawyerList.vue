@@ -14,13 +14,12 @@
 						执业{{item.small_title}}年
 						<view class="flexRowBetween starClass" style="margin-left: 10rpx;">
 							<view class="starBox">
-								<image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon13.png" mode=""></image>
-								<image src="../../static/images/home-icon11.png" mode=""></image>
+								<image v-for="c_item in stars" :src="item.averageScore > c_item ?(item.averageScore-c_item == 0.5?halfSrc:selectedSrc) : normalSrc" mode="">
+								
+								</image>
 							</view>
-							<view>8.5分</view>
+							<view v-if="item.averageScore>0">{{item.averageScore*2}}分</view>
+							<view v-if="item.averageScore==0">暂无评分</view>
 						</view>
 						<img class="arrow" src="../../static/images/arrow-icon1.png" alt="">
 					</view>
@@ -45,7 +44,10 @@
 				Router:this.$Router,
 				
 				mainData:[],
-				
+				stars: [0, 1, 2, 3, 4],
+				normalSrc: '../../static/images/home-icon11.png',
+				selectedSrc: '../../static/images/home-icon12.png',
+				halfSrc: '../../static/images/home-icon13.png',
 			}
 		},
 		onLoad() {
@@ -95,15 +97,47 @@
 						condition: 'in',
 					},
 				};
+				postData.getAfter = {
+					message: {
+						tableName: 'Message',
+						searchItem: {
+							status:1
+						},
+						middleKey: 'id',
+						key: 'relation_id',
+						condition: 'in',
+						compute:{
+						  score:[
+						    'sum',
+						    'score',
+						    {
+						      status:1,
+						    }
+						  ],
+						  count:[
+						    'count',
+						    'count',
+						    {
+						      status:1,
+						    }
+						  ]
+						},
+					},
+				};
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
 						self.mainData.push.apply(self.mainData, res.info.data);
 						for (var i = 0; i < self.mainData.length; i++) {
 							self.mainData[i].keywords = self.mainData[i].keywords.split(',')
+							console.log(self.mainData[i].message.score)
+							console.log(self.mainData[i].message.count)
+							self.mainData[i].averageScore = self.mainData[i].message.score/self.mainData[i].message.count
+													
 						}
 					} else {
 						self.$Utils.showToast('没有更多了', 'none');
 					};
+					console.log('self.mainData',self.mainData)
 					self.$Utils.finishFunc('getMainData');
 				};
 				self.$apis.articleGet(postData, callback);
