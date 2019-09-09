@@ -12,8 +12,13 @@
 		<view class="f5H10"></view>
 		
 		<view class="seviseDetaCont2 pdlr4" style="padding: 20px 4%;">
-			<view class="content ql-editor" style="padding: 0;" v-html="mainData.content">
-			</view>
+			<!-- <view class="content ql-editor" style="padding: 0;" v-html="mainData.content">
+			</view> -->
+			<!--  #ifdef  MP-WEIXIN -->
+				<import src="../../common/plugin/wxParse/wxParse.wxml" />
+				<template is="wxParse" :wxParseData="mainData.content" />
+			<!--  #endif -->
+			
 		</view>
 		
 
@@ -21,6 +26,7 @@
 </template>
 
 <script>
+	import wxParse from "../../common/plugin/wxParse/wxParse.js"
 	export default {
 		data() {
 			return {
@@ -31,6 +37,7 @@
 		onLoad(options) {
 			const self = this;
 			self.id = options.id;
+			console.log(wxParse)
 			self.$Utils.loadAll(['getMainData'], self);
 		},
 		methods: {
@@ -45,6 +52,8 @@
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
 						self.mainData = res.info.data[0];
+						self.mainData.content=wxParse.wxParse('article', 'html', res.info.data[0].content, this).nodes;
+						console.log('self.mainData.content',self.mainData.content)
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};
