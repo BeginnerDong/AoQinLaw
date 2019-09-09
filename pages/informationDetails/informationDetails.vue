@@ -11,14 +11,9 @@
 		</view>
 		<view class="f5H10"></view>
 		
-		<view class="seviseDetaCont2 pdlr4" style="padding: 20px 4%;">
-			<!-- <view class="content ql-editor" style="padding: 0;" v-html="mainData.content">
-			</view> -->
-			<!--  #ifdef  MP-WEIXIN -->
-				<import src="../../common/plugin/wxParse/wxParse.wxml" />
-				<template is="wxParse" :wxParseData="mainData.content" />
-			<!--  #endif -->
-			
+		<view class="seviseDetaCont2 pdlr4" style="padding: 20px 4%;overflow: hidden;">
+			<view class="content ql-editor" style="padding: 0;overflow: hidden;" v-html="mainData.content">
+			</view>
 		</view>
 		
 
@@ -52,18 +47,15 @@
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
 						self.mainData = res.info.data[0];
-						self.mainData.content=wxParse.wxParse('article', 'html', res.info.data[0].content, this).nodes;
-						console.log('self.mainData.content',self.mainData.content)
+						const regex = new RegExp('<img', 'gi');
+						self.mainData.content = self.mainData.content.replace(regex, `<img style="max-width: 100%;"`);
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};
 					self.$Utils.finishFunc('getMainData');
-
 				};
 				self.$apis.articleGet(postData, callback);
-
 			},
-
 		},
 	};
 </script>
