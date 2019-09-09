@@ -4,8 +4,8 @@ const CONFIG = {
         development: {
                 loginTitleTxt: "澳秦法律", // 登录页标题
                 copyrightTxt: "澳秦法律v1.0", // 版本信息
-                assetsPath: "http://106.12.155.217/aoqin", // 静态资源路径
-                baseUrl: "http://106.12.155.217/aoqin/public/index.php/api/v1/",
+                assetsPath: "https://xiaofabao365.com", // 静态资源路径
+                baseUrl: "https://xiaofabao365.com/api/public/index.php/api/v1/",
                 tokenKey: "WECHAT_TRADE", // 登录标识
                 testOpenId: "oEjRxwy7jL9PgG0kWeb4VcDTZEas", // 小程序测试openId
                 forcedLogin: false, // touristMode游客模式下APP是否强制用户登录 场景：当用户进入登录页面后无法后退。
@@ -16,8 +16,8 @@ const CONFIG = {
         production: {
                 loginTitleTxt: "澳秦法律", // 登录页标题
                 copyrightTxt: "澳秦法律v1.0", // 版本信息
-                assetsPath: "http://106.12.155.217/aoqin/wx/", // 静态资源路径
-                baseUrl: "http://106.12.155.217/aoqin/public/index.php/api/v1/",
+                assetsPath: "https://xiaofabao365.com/wx/", // 静态资源路径
+                baseUrl: "https://xiaofabao365.com/api/public/index.php/api/v1/",
                 tokenKey: "WECHAT_TRADE", // 登录标识
                 testOpenId: "oEjRxwy7jL9PgG0kWeb4VcDTZEas", // 小程序测试openId
                 forcedLogin: false, // touristMode游客模式下APP是否强制用户登录 场景：当用户进入登录页面后无法后退。

@@ -15,5 +15,12 @@
 
 <style>
 	@import "/assets/style/style.css";
+	.ql-editor img{
+		max-width: 100%;
+		min-width: 50%;
+		display: block;
+		padding: 10px 0;
+	}
 	@import "/assets/style/quill.css";
+	
 </style>

@@ -36,7 +36,12 @@
 		onLoad() {
 			const self = this;
 			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-			self.$Utils.loadAll(['getMainData'], self);
+			uni.setStorageSync('canClick', false);
+		},
+		
+		onShow(){
+			const self = this;
+			self.getMainData(true)
 		},
 		
 		onReachBottom() {

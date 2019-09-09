@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view>	
 		<!-- banner -->
 		<view class="banner-box">
 			<view class="banner">
@@ -181,7 +181,7 @@
 				autoplay: true,
 				interval: 2000,
 				duration: 500,
-				labelData: {},
+				labelData: [],
 				productData:[],
 				articleData:[],
 				userInfoData:{},
@@ -246,9 +246,10 @@
 				console.log('postData', postData)
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
-						self.labelData = res.info.data[0].mainImg
+						self.labelData = res.info.data[0].mainImg;
+						
 					}
-					console.log('res', res)
+					console.log('self.labelData', self.labelData)
 					self.$Utils.finishFunc('getLabelData');
 			
 				};
@@ -268,9 +269,9 @@
 					if (res.info.data.length > 0) {
 						self.productData.push.apply(self.productData,res.info.data)
 					}
-					console.log('res', res)
+					console.log('2132',self.productData)
 					self.$Utils.finishFunc('getProductData');
-			
+					
 				};
 				self.$apis.productGet(postData, callback);
 			},

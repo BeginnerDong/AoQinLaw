@@ -71,10 +71,26 @@
 		onLoad(options) {
 			const self = this;
 			self.idArray = options.id;
-			self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData','getUserInfoData'], self);
 		},
 		
 		methods: {
+			
+			getUserInfoData() {
+				const self = this;
+				console.log('852369')
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				const callback = (res) => {
+					if (res.solely_code == 100000 && res.info.data[0]) {
+						self.userInfoData = res.info.data[0];
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserInfoData');		
+				};
+				self.$apis.userInfoGet(postData, callback);
+			},
 			
 			getMainData() {
 				const self = this;
@@ -103,6 +119,20 @@
 			submit() {
 				const self = this;
 				uni.setStorageSync('canClick', false);
+				if(self.userInfoData.name==''){
+					uni.showModal({
+					    title: '提示',
+					    content: '您还未注册，立即注册吗？',
+					    success: function (res) {
+					        if (res.confirm) {
+					            self.Router.navigateTo({route:{path:'/pages/myMessage/myMessage'}})
+					        } else if (res.cancel) {
+					            console.log('用户点击取消');
+					        }
+					    }
+					});
+					return
+				};
 				const pass = self.$Utils.checkComplete(self.submitData);
 				const callback = (user, res) => {
 					if(pass){

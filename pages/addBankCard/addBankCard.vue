@@ -92,7 +92,7 @@
 					self.userInfoUpdate()
 				} else {
 					uni.setStorageSync('canClick', true);
-					self.$Utils.showToast('请输入提现金额', 'none')
+					self.$Utils.showToast('请补全信息', 'none')
 				};
 			},
 			

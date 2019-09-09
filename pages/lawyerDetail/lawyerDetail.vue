@@ -147,7 +147,8 @@
 				postData.tokenFuncName = 'getProjectToken';
 				postData.paginate = self.$Utils.cloneForm(self.paginate);
 				postData.searchItem = {
-					relation_id:self.id,					
+					relation_id:self.id,	
+					user_type:0
 				};
 				postData.compute = {
 				  totalCount:[

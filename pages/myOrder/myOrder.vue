@@ -74,6 +74,7 @@
 				const self = this;
 				uni.setStorageSync('canClick', false);
 				if(current!=self.current){
+					self.searchItem = {};
 					self.current = current
 					if (current == '1') {
 						self.searchItem.pay_status = '0';

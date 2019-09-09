@@ -17,13 +17,12 @@
 						执业{{mainData.small_title}}年
 						<view class="flexRowBetween starClass" style="margin-left: 10rpx;">
 							<view class="starBox">
-								<image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon13.png" mode=""></image>
-								<image src="../../static/images/home-icon11.png" mode=""></image>
+								<image v-for="c_item in stars" :src="mainData.averageScore > c_item ?(mainData.averageScore-c_item == 0.5?halfSrc:selectedSrc) : normalSrc" mode="">
+								
+								</image>
 							</view>
-							<view>8.6分</view>
+							<view v-if="mainData.averageScore>0">{{mainData.averageScore*2}}分</view>
+							<view v-if="mainData.averageScore==0">暂无评分</view>
 						</view>
 					</view>
 					<view class="three" style="margin-top: 26rpx;">
@@ -34,7 +33,7 @@
 				</view>
 				<view class="rr_btn">
 					<view @click="addContact">同步到通讯录</view>
-					<view class="bj" open-type="share">分享名片</view>
+					<button class="share" open-type="share">分享名片</button>
 				</view>
 			</view>
 		</view>
@@ -107,7 +106,12 @@
 				mainData:{},
 				userInfoData:{},
 				showPhone:false,
-				showWechat:false
+				showWechat:false,
+				averageScore:0,
+				stars: [0, 1, 2, 3, 4],
+				normalSrc: '../../static/images/home-icon11.png',
+				selectedSrc: '../../static/images/home-icon12.png',
+				halfSrc: '../../static/images/home-icon13.png',
 			}
 		},
 		onLoad(options) {
@@ -232,10 +236,38 @@
 				postData.searchItem = {
 					id:self.id
 				}
+				postData.getAfter = {
+					message: {
+						tableName: 'Message',
+						searchItem: {
+							status:1
+						},
+						middleKey: 'id',
+						key: 'relation_id',
+						condition: 'in',
+						compute:{
+						  score:[
+						    'sum',
+						    'score',
+						    {
+						      status:1,
+						    }
+						  ],
+						  count:[
+						    'count',
+						    'count',
+						    {
+						      status:1,
+						    }
+						  ]
+						},
+					},
+				};
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
 						self.mainData = res.info.data[0];
-						self.mainData.keywords = self.mainData.keywords.split(',')
+						self.mainData.keywords = self.mainData.keywords.split(',');
+						self.mainData.averageScore = self.mainData.message.score/self.mainData.message.count
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};
@@ -257,7 +289,7 @@
 	.rr_btn{ position: absolute; top: 50%;right:3%; transform:translateY(-50%);}
 	.rr_btn view{ width: 170rpx; height: 50rpx; line-height: 50rpx;text-align: center; border:2rpx solid #537DEB; font-size: 24rpx; color: #333;border-radius: 10rpx; }
 	.rr_btn view.bj{background: #537DEB; color: #fff; margin-top: 50rpx;}
-	
+	.share{background: #537DEB;color: #fff;margin-top: 50rpx;width: 170rpx;height: 50rpx;line-height: 50rpx;text-align: center;border: 2rpx solid #537DEB;font-size: 24rpx;border-radius: 10rpx;}
 	.iconTitle{ display: flex;justify-content: flex-start;align-items: center; height: 100rpx;}
 	.iconTitle .icon{ width: 30rpx; height: 30rpx; margin-right: 20rpx;}
 	.msglist{ height: 100rpx; display: flex;justify-content: flex-start; position: relative; font-size: 26rpx; align-items: center; border-bottom: 2rpx solid #e7e7e7;}

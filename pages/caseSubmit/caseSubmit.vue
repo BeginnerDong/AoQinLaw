@@ -157,7 +157,7 @@
 				postData.data = {};
 				postData.data = self.$Utils.cloneForm(self.submitData);
 				postData.data.behavior = 1;
-				postData.saveAfter = [{
+				/* postData.saveAfter = [{
 					tableName: 'UserInfo',
 					FuncName: 'update',
 					searchItem: {
@@ -167,7 +167,7 @@
 						phone: self.submitData.phone,
 						name:self.submitData.keywords,
 					}
-				}];
+				}]; */
 				const callback = (data) => {				
 					if (data.solely_code == 100000) {					
 						self.$Utils.showToast('提交成功', 'none');
