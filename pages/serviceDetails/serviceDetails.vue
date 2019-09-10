@@ -82,7 +82,9 @@
 				};
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
-						self.mainData = res.info.data[0]
+						self.mainData = res.info.data[0];
+						const regex = new RegExp('<img', 'gi');
+						self.mainData.content = self.mainData.content.replace(regex, `<img style="max-width: 100%;"`);
 						for (var i = 0; i < self.mainData.sku.length; i++) {
 							self.mainData.sku[i].select = false
 						}

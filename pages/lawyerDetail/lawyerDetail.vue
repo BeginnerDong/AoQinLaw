@@ -123,7 +123,9 @@
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
 						self.mainData = res.info.data[0];
-						self.mainData.keywords = self.mainData.keywords.split(',')
+						self.mainData.keywords = self.mainData.keywords.split(',');
+						const regex = new RegExp('<img', 'gi');
+						self.mainData.content = self.mainData.content.replace(regex, `<img style="max-width: 100%;"`);
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};

@@ -65,6 +65,8 @@
 						for (var i = 0; i < self.mainData.products.length; i++) {
 							if(self.mainData.products[i].behavior==1){
 								self.cardData = self.mainData.products[i].snap_product
+								const regex = new RegExp('<img', 'gi');
+								self.cardData.content = self.cardData.content.replace(regex, `<img style="max-width: 100%;"`);
 							};
 							if(self.mainData.products[i].behavior==2){
 								self.serviceData.push(self.mainData.products[i])

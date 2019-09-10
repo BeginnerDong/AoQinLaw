@@ -91,6 +91,10 @@
 				const callback = (res) => {
 					if (res.info.data.length > 0) {
 						self.mainData.push.apply(self.mainData, res.info.data);
+						for (var i = 0; i < self.mainData.length; i++) {
+							const regex = new RegExp('<img', 'gi');
+							self.mainData[i].content = self.mainData[i].content.replace(regex, `<img style="max-width: 100%;"`);
+						}
 					} else {
 						self.$Utils.showToast('没有更多了', 'none');
 					};
@@ -159,7 +163,7 @@
 				};
 				postData.payAfter = [];
 				var ratio = wx.getStorageSync('user_info').thirdApp.ratio;
-				if (self.userInfoData&&self.userInfoData.behavior==0&&self.data.userInfoData.parent.length>0) {
+				if (self.userInfoData&&self.userInfoData.behavior==0&&self.userInfoData.parent.length>0) {
 					if (self.mainData[self.currentIndex].price > 0 && ratio>0) {
 						postData.payAfter.push({
 							tableName: 'FlowLog',
@@ -168,11 +172,22 @@
 								relation_user: wx.getStorageSync('user_info').user_no,
 								count: self.mainData[self.currentIndex].price*(ratio/100),
 								trade_info: '下级消费返佣',
-								user_no: self.data.userInfoData.parent[0].parent_no,
+								user_no: self.userInfoData.parent[0].parent_no,
 								type: 2,
 								thirdapp_id: 2,
 							}
-						});
+						},
+						{
+							tableName: 'UserInfo',
+							FuncName: 'update',
+							data: {
+								behavior:1
+							},
+							searchItem:{
+								user_no:wx.getStorageSync('user_info').user_no
+							}
+						}
+						);
 					};
 				}
 				

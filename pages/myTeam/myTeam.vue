@@ -14,7 +14,7 @@
 		
 		<view class="teamBox1" v-if="num==1">
 			<view class="item flexRowBetween" v-for="(item,index) in rewardData" :key="index">
-				<view class="left flexRowBetween">
+				<view class="left flexRowBetween" style="width: 50%;">
 					<view class="photo">
 						<image :src="item.user.headImgUrl"></image>
 					</view>
@@ -150,7 +150,7 @@
 				postData.getAfter = {
 					user:{
 						tableName:'User',
-						middleKey:'user_no',
+						middleKey:'child_no',
 						key:'user_no',
 						searchItem:{
 							status:1
@@ -220,8 +220,8 @@
 	
 	.orderNav .tt{ width: 50%;}
 	.teamBox1 .item{ padding: 30rpx 4%;border-bottom: 2rpx solid #e7e7e7;}
-	.teamBox1 .item .photo{width: 100rpx; height: 100rpx; border-radius: 50%; overflow: hidden;}
-	.teamBox1 .item .photo image{ width: 100%; height: 100%;}
+	.teamBox1 .item .photo{width: 100rpx; height: 100rpx;}
+	.teamBox1 .item .photo image{ width: 100%; height: 100%; border-radius: 50%;}
 	.teamBox1 .item .cont{
 		margin-left: 20rpx;
 		width: 350rpx;

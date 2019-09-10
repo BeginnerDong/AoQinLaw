@@ -76,11 +76,24 @@
 		
 		methods: {
 			
+		
+			
 			getUserInfoData() {
 				const self = this;
 				console.log('852369')
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
+				postData.getAfter = {
+					parent:{
+						tableName:'Distribution',
+						middleKey:'user_no',
+						key:'child_no',
+						searchItem:{
+							status:1,
+						},
+						condition:'='
+					}
+				};
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
 						self.userInfoData = res.info.data[0];
@@ -195,6 +208,36 @@
 						price: self.price
 					}
 				};
+				postData.payAfter = [];
+				var ratio = wx.getStorageSync('user_info').thirdApp.ratio;
+				if (self.userInfoData&&self.userInfoData.behavior==0&&self.userInfoData.parent.length>0) {
+					if (self.price > 0 && ratio>0) {
+						postData.payAfter.push(
+							{
+								tableName: 'FlowLog',
+								FuncName: 'add',
+								data: {
+									relation_user: wx.getStorageSync('user_info').user_no,
+									count: self.price*(ratio/100),
+									trade_info: '下级消费返佣',
+									user_no: self.userInfoData.parent[0].parent_no,
+									type: 2,
+									thirdapp_id: 2,
+								}
+							},
+							{
+								tableName: 'UserInfo',
+								FuncName: 'update',
+								data: {
+									behavior:1
+								},
+								searchItem:{
+									user_no:wx.getStorageSync('user_info').user_no
+								}
+							}
+						);
+					};
+				}
 				const callback = (res) => {
 					if (res.solely_code == 100000) {
 						uni.setStorageSync('canClick', true);
@@ -203,7 +246,7 @@
 								if (payData == 1) {
 									self.$Utils.showToast('操作成功', 'none');
 									setTimeout(function() {
-										Router.reLaunch({route:{path:'/pages/user/user'}})
+										self.Router.reLaunch({route:{path:'/pages/user/user'}})
 									}, 800)
 								};
 							};

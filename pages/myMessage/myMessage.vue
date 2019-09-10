@@ -18,9 +18,14 @@
 				<view class="eidt-line">
 					<view class="ll"><text class="red">* </text>验证码:</view>
 					<view class="rr" style="width: 45%;">
-						<input type="number" placeholder="请输入验证码" onkeyup="this.value=this.value.replace(/\D/g,'')">
+						<input type="number" v-model="submitData.code" placeholder="请输入验证码" onkeyup="this.value=this.value.replace(/\D/g,'')">
 					</view>
-					<view style="width:160rpx; height: 60rpx; line-height: 60rpx;text-align: center; border-radius: 10rpx; color: #fff;background: #537DEB; font-size: 24rpx;">获取验证码</view>
+					<view @click="sendCode" v-if="!hasSend" style="width:160rpx; height: 60rpx; line-height: 60rpx;text-align: center; border-radius: 10rpx; color: #fff;background: #537DEB; font-size: 24rpx;">
+						{{text}}
+					</view>
+					<view  v-else style="width:160rpx; height: 60rpx; line-height: 60rpx;text-align: center; border-radius: 10rpx; color: #fff;background: #537DEB; font-size: 24rpx;">
+						{{text}}
+					</view>
 				</view>
 				<view class="eidt-line">
 					<view class="ll" style="width: 36%;"><text class="red">* </text>推荐人手机号码:</view>
@@ -48,9 +53,13 @@
 				submitData:{
 					name:'',
 					phone:'',
+					code:'',
 					passage1:'',
-				}
-				
+				},
+				currentTime:61,
+				text:'获取验证码',
+				hasSend:false,
+				isRegister:false
 			}
 		},
 		onLoad() {
@@ -74,6 +83,9 @@
 						self.submitData.name = res.info.data[0].name,
 						self.submitData.phone = res.info.data[0].phone,
 						self.submitData.passage1 = res.info.data[0].passage1
+						if(self.submitData.phone!=''){
+							self.isRegister = true
+						}
 					};
 					self.$Utils.finishFunc('getMainData');		
 				};
@@ -84,7 +96,9 @@
 				const self = this;
 				uni.setStorageSync('canClick', false);
 				var phone = self.submitData.phone;
-				const pass = self.$Utils.checkComplete(self.submitData);
+				var newObject = self.$Utils.cloneForm(self.submitData);
+				delete newObject.passage1;
+				const pass = self.$Utils.checkComplete(newObject);
 				console.log('pass', pass);
 				console.log('self.submitData',self.submitData)
 				if (pass) {
@@ -103,6 +117,53 @@
 					self.$Utils.showToast('请补全信息', 'none')
 				};
 			},
+			
+			sendCode(){
+				var self = this;
+				console.log(111)
+				if(self.hasSend){
+					return;
+				};
+				var phone = self.submitData.phone;
+				
+				if (phone.trim().length != 11 || !/^1[3|4|5|6|7|8|9]\d{9}$/.test(phone)) {
+					
+					self.$Utils.showToast('请输入正确的手机号', 'none');
+					return;
+				}
+				var postData = {
+					params:{
+					  PhoneNumbers:self.submitData.phone,
+					  TemplateCode:"SMS_173476603",
+						SignName:"澳秦功成小法宝法律服务"
+					 }
+					
+				};
+				var callback = function(res){
+					if(res.solely_code==100000){
+						self.hasSend = true;
+						var interval = setInterval(function() {
+							self.currentTime--; //每执行一次让倒计时秒数减一
+						
+							self.text=self.currentTime + 's';//按钮文字变成倒计时对应秒数
+							
+							//如果当秒数小于等于0时 停止计时器 且按钮文字变成重新发送 且按钮变成可用状态 倒计时的秒数也要恢复成默认秒数 即让获取验证码的按钮恢复到初始化状态只改变按钮文字
+							if (self.currentTime <= 0) {
+								clearInterval(interval)
+								
+								self.hasSend = false;
+								self.text='重新发送';
+								self.currentTime= 61;
+								
+							}
+							
+						}, 1000);
+					}else{
+						self.$Utils.showToast('发送失败', 'none');
+					};
+				};
+				self.$apis.codeGet(postData, callback);
+			},
 					
 			userInfoUpdate() {
 				const self = this;
@@ -111,8 +172,18 @@
 				/* if(!wx.getStorageSync('user_info')||!wx.getStorageSync('user_info').headImgUrl){
 				  postData.refreshToken = true;
 				}; */
-				postData.data = {};
-				postData.data = self.$Utils.cloneForm(self.submitData);
+				postData.data = {
+					phone:self.submitData.phone,
+					name:self.submitData.name,
+					passage1:self.submitData.passage1
+				};
+				if(self.isRegister){
+					delete postData.data.phone
+				};
+				postData.smsAuth = {
+					phone:self.submitData.phone,						
+					code:self.submitData.code					,
+				};
 				const callback = (data) => {				
 					if (data.solely_code == 100000) {					
 						self.$Utils.showToast('提交成功', 'none');
