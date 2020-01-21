@@ -13,59 +13,68 @@
 				</swiper>
 			</view>
 		</view>
-
+		<view class="f5H10"></view>
+		<swiper class="swiper-box1" autoplay="true" interval="5000" duration="1000" vertical="true">
+			<block v-for="(item,index) in newsData" :key="index">
+				<swiper-item class="swiper-item avoidOverflow" style="line-height: 90rpx;font-size:14px;width: 94%;padding: 0 10px;">
+					{{item.description}}
+				</swiper-item>
+			</block>
+		</swiper>
+		<view class="f5H10"></view>	
 		<!-- 八个导航 -->
-		<view class="indHome">
+		<view class="indHome" style="border-bottom: none;">
+			<view class="circel-nav ilblock" @click="Router.redirectTo({route:{path:'/pages/caseSubmit/caseSubmit'}})" >
+				<image src="../../static/images/home-icon2.png"></image>
+				<view class="color2 font13">法律咨询</view>
+			</view>
 			<button class="circel-nav ilblock" v-if="userInfoData.order&&userInfoData.order.length>0" open-type="contact" style="outline: none;line-height: 1.3;overflow: initial;background: #fff;border: none;">
 				<image src="../../static/images/home-icon1.png"></image>
-				<view class="color2 font13">在线咨询</view>
+				<view class="color2 font13">会员专线</view>
 			</button>
 			<view class="circel-nav ilblock" @click="showToast" v-if="userInfoData.order&&userInfoData.order.length==0">
 				<image src="../../static/images/home-icon1.png"></image>
-				<view class="color2 font13">在线咨询</view>
-			</view>
-			<view class="circel-nav ilblock" @click="Router.navigateTo({route:{path:'/pages/lawyerList/lawyerList'}})">
-				<image src="../../static/images/home-icon2.png"></image>
-				<view class="color2 font13">律师</view>
+				<view class="color2 font13">会员专线</view>
 			</view>
 			<view class="circel-nav ilblock"  @click="Router.navigateTo({route:{path:'/pages/serviceList/serviceList'}})">
 				<image src="../../static/images/home-icon3.png"></image>
-				<view class="color2 font13">特色服务</view>
+				<view class="color2 font13">法律服务</view>
 			</view>
 			<view class="circel-nav ilblock" @click="Router.navigateTo({route:{path:'/pages/VIPservice/VIPservice'}})">
 				<image src="../../static/images/home-icon4.png"></image>
-				<view class="color2 font13">会员服务</view>
+				<view class="color2 font13">开通会员</view>
 			</view>
-			<view class="circel-nav ilblock" @click="Router.navigateTo({route:{path:'/pages/legalAdvice/legalAdvice'}})">
+			<view class="circel-nav ilblock" @click="Router.navigateTo({route:{path:'/pages/companyProfile/companyProfile'}})">
 				<image src="../../static/images/home-icon5.png"></image>
-				<view class="color2 font13">法律咨询</view>
+				<view class="color2 font13">合同范本</view>
 			</view>
 			<view class="circel-nav ilblock" @click="Router.navigateTo({route:{path:'/pages/generalAgent/generalAgent'}})">
 				<image src="../../static/images/home-icon6.png"></image>
-				<view class="color2 font13">普通代理</view>
+				<view class="color2 font13">法律顾问</view>
 			</view>
-			<view class="circel-nav ilblock" @click="Router.navigateTo({route:{path:'/pages/companyProfile/companyProfile'}})">
+			<view class="circel-nav ilblock" @click="Router.navigateTo({route:{path:'/pages/lawyerList/lawyerList'}})">
 				<image src="../../static/images/home-icon7.png"></image>
-				<view class="color2 font13">公司简介</view>
+				<view class="color2 font13">合作律师</view>
 			</view>
 			<view class="circel-nav ilblock" @click="Router.navigateTo({route:{path:'/pages/contactUs/contactUs'}})">
 				<image src="../../static/images/home-icon8.png"></image>
 				<view class="color2 font13">联系我们</view>
 			</view>
 		</view>
-
+		
+		<view class="f5H10"></view>
 		<!-- 特色服务 -->
 		<view class="infor-title flexRowBetween">
-			<view class="tt">特色服务</view>
+			<view class="tt">法律服务</view>
 			<view class="more" @click="Router.navigateTo({route:{path:'/pages/serviceList/serviceList'}})">更多&gt;</view>
 		</view>
 		<view class="proLis flexRowBetween">
-			<view class="item-lis" v-for="(item,index) in productData" :key="index" 
-			@click="Router.navigateTo({route:{path:'/pages/serviceDetails/serviceDetails?id='+item.id}})">
-				<image class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" alt="" />
+			<view class="item-lis" v-for="(item,index) in productData" :key="index" :data-id="item.id"
+			@click="Router.navigateTo({route:{path:'/pages/serviceDetails/serviceDetails?id='+$event.currentTarget.dataset.id}})">
+				<image style="height: 275rpx;" class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" alt="" />
 				<view class="tit avoidOverflow">{{item.title}}</view>
-				<view class="price">{{item.price}}</view>
-				<view class="freeVip">会员免费</view>
+				<!-- <view class="price">{{item.price}}</view> -->
+				<!-- <view class="freeVip">会员免费</view> -->
 			</view>
 		</view>
 		<!-- 特色服务 end -->
@@ -80,7 +89,7 @@
 			<view class="zixunLis" v-for="(item,index) in consultData" :key="index" v-if="index<3">
 				<view class="one">
 					<view class="photo">
-						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
+						<image  :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
 					</view>
 					<view class="msg">
 						<view class="name">{{item.title}}</view>
@@ -113,7 +122,7 @@
 				</view>
 				<view class="four flexRowBetween ">
 					<view class="tit">{{item.label&&item.label[0]?item.label[0].title:''}}</view>
-					<view class="time">{{item.create_time}}</view>
+					<!-- <view class="time">{{item.create_time}}</view> -->
 				</view>
 			</view>
 		</view>
@@ -128,8 +137,8 @@
 		</view>
 		
 		<view class="newslisbox">
-			<view class="newslis" v-for="(item,index) in articleData" :key="index"  
-			@click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails?id='+item.id}})" v-if="index<4">
+			<view class="newslis" v-for="(item,index) in articleData" :key="index"  :data-id="item.id"
+			@click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails?id='+$event.currentTarget.dataset.id}})" v-if="index<4">
 				<view class="twoCt flexRowBetween">
 					<view class="leftbox">
 						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
@@ -138,7 +147,7 @@
 						<view class="title avoidOverflow2">{{item.title}}</view>
 						<view class="lable flexRowBetween">
 							<view>{{item.description}}</view>
-							<view class="time">{{item.create_time}}</view>
+							<!-- <view class="time">{{item.create_time}}</view> -->
 						</view>
 					</view>
 				</view>
@@ -148,7 +157,7 @@
 		<!-- 热点资讯 end-->
 
 		<!--底部tab键-->
-		<view class="navbar">
+		<view class="navbar" v-if="showNav">
 			<view class="navbar_item" @click="Router.redirectTo({route:{path:'/pages/index/index'}})">
 				<view class="nav_img">
 					<image src="../../static/images/nabar1-a.png" />
@@ -159,8 +168,20 @@
 				<view class="nav_img">
 					<image src="../../static/images/nabar2.png" />
 				</view>
-				<view class="text">案件提交</view>
+				<view class="text">免费咨询</view>
 			</view>
+			<button class="navbar_item" v-if="userInfoData.order&&userInfoData.order.length>0" open-type="contact" style="outline: none;line-height: 1.4;overflow: initial;background: #fff;border: none;">
+				<view class="nav_img">
+					<image src="../../static/images/nabar4.png" />
+				</view>
+				<view class="text">会员专线</view>
+			</button>
+			<button class="navbar_item" style="outline: none;line-height: 1.4;overflow: initial;background: #fff;border: none;"  @click="showToast" v-if="userInfoData.order&&userInfoData.order.length==0">
+				<view class="nav_img">
+					<image src="../../static/images/nabar4.png" />
+				</view>
+				<view class="text">会员专线</view>
+			</button>
 			<view class="navbar_item" @click="Router.redirectTo({route:{path:'/pages/user/user'}})">
 				<view class="nav_img">
 					<image src="../../static/images/nabar3.png" />
@@ -179,8 +200,8 @@
 				Router:this.$Router,
 				indicatorDots: true,
 				autoplay: true,
-				interval: 2000,
-				duration: 500,
+				interval: 4000,
+				duration: 1000,
 				labelData: [],
 				productData:[],
 				articleData:[],
@@ -190,13 +211,47 @@
 				normalSrc: '../../static/images/home-icon11.png',
 				selectedSrc: '../../static/images/home-icon12.png',
 				halfSrc: '../../static/images/home-icon13.png',
+				newsData:[],
+				showNav:false
 			}
 		},
 		
 		onLoad() {
 			const self = this;
-			self.$Utils.loadAll(['getUserInfoData','getLabelData','getProductData','getArticleData','getConsultData'], self);
+			self.$Utils.loadAll(['getNewsData','getUserInfoData','getLabelData','getProductData','getArticleData','getConsultData'], self);
 		},
+		
+		onShareAppMessage(res){
+		  const self = this;
+		    return {
+		      title: '小法宝',
+		      path: 'pages/index/index',
+		      success: function (res){
+		        console.log(res);
+		        console.log(parentNo)
+		        if(res.errMsg == 'shareAppMessage:ok'){
+		          console.log('分享成功')
+		          if (self.data.shareBtn){
+		            if(res.hasOwnProperty('shareTickets')){
+		            console.log(res.shareTickets[0]);
+		              self.data.isshare = 1;
+		            }else{
+		              self.data.isshare = 0;
+		            }
+		          }
+		        }else{
+		          wx.showToast({
+		            title: '分享失败',
+		          })
+		          self.data.isshare = 0;
+		        }
+		      },
+		      fail: function(res) {
+		        console.log(res)
+		      }
+		    }
+		},
+		
 		methods: {
 			
 			showToast(){
@@ -227,6 +282,7 @@
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
 						self.userInfoData = res.info.data[0];
+						self.showNav = true
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};
@@ -256,6 +312,24 @@
 				self.$apis.labelGet(postData, callback);
 			},
 			
+			getNewsData() {
+				const self = this;
+				const postData = {
+					searchItem: {
+						thirdapp_id: 2,
+						parentid:49
+					},
+				};
+				console.log('postData', postData)
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.newsData.push.apply(self.newsData,res.info.data)
+					}
+					self.$Utils.finishFunc('getNewsData');
+				};
+				self.$apis.labelGet(postData, callback);
+			},
+			
 			getProductData() {
 				const self = this;
 				const postData = {
@@ -263,6 +337,15 @@
 						thirdapp_id: 2,
 						type:1
 					},
+				};
+				postData.paginate = {
+					count: 0,
+					currentPage: 1,
+					is_page: true,
+					pagesize: 4
+				};
+				postData.order = {
+					listorder:'desc'
 				};
 				console.log('postData', postData)
 				const callback = (res) => {
@@ -282,6 +365,12 @@
 				const postData = {};
 				postData.searchItem = {
 					thirdapp_id:2
+				};
+				postData.paginate = {
+					count: 0,
+					currentPage: 1,
+					is_page: true,
+					pagesize: 4
 				};
 				postData.getBefore = {
 					caseData: {
@@ -320,6 +409,12 @@
 				postData.searchItem = {
 					thirdapp_id:2
 				};
+				postData.paginate = {
+					count: 0,
+					currentPage: 1,
+					is_page: true,
+					pagesize: 4
+				};
 				postData.getBefore = {
 					caseData: {
 						tableName: 'Label',
@@ -355,5 +450,7 @@
 	button::after{
 		border:none
 	}
-
+	.swiper-box1{
+		height:90rpx
+	}
 </style>

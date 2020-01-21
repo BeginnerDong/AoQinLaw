@@ -16,7 +16,7 @@
 						</view>
 						<view class="cont">
 							<view class="title avoidOverflow2">{{item.products&&item.products[0]&&item.products[0].snap_product&&item.products[0].snap_product.product&&item.products[0].snap_product.product?item.products[0].snap_product.product.title:''}}</view>
-							<view class="charge">会员免费</view>
+							<!-- <view class="charge">会员免费</view> -->
 						</view>
 					</view>
 					<view class="explain" v-for="c_item in item.products">

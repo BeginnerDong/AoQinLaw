@@ -17,7 +17,9 @@
 				<image src="../../static/images/us-icon2.png" mode=""></image>
 			</view>
 		</view>
-		<view class="pdlr4" style="color: #666; font-size: 26rpx; text-align: center;margin: 150rpx auto 60rpx auto;">如您对我们有兴趣，欢迎随时来电</view>
+		<view class="pdlr4" style="color: #666; font-size: 26rpx; text-align: center;margin: 150rpx auto 60rpx auto;">
+			如有需求，欢迎随时来电
+		</view>
 		
 	</view>
 </template>

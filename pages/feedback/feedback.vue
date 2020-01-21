@@ -4,13 +4,13 @@
 			<view class="infor">
 				<view class="tit">标题：</view>
 				<view class="edit">
-					<input type="text" placeholder="请输入姓名" v-model="submitData.title">
+					<input type="text" placeholder="请输入您的称呼和联系方式" v-model="submitData.title">
 				</view>
 			</view>
 			<view class="infor">
 				<view class="tit">内容：</view>
 				<view class="edit">
-					<textarea value="" placeholder="请输入您想要反馈的内容" v-model="submitData.content"/>
+					<textarea value="" placeholder="请输入您反馈的内容" v-model="submitData.content"/>
 				</view>
 			</view>
 			<view class="submitbtn" style="margin:150rpx auto 100rpx auto">
@@ -69,12 +69,24 @@
 				postData.data = self.$Utils.cloneForm(self.submitData);
 				const callback = (data) => {				
 					if (data.solely_code == 100000) {					
-						self.$Utils.showToast('提交成功', 'none');
-						setTimeout(function() {
-							uni.navigateBack({
-								delta:1
-							})
-						}, 800)
+						
+						uni.showModal({
+						    title: '提交成功',
+						    content: '感谢您的宝贵意见，您的反馈我们将在研究之后做出相应提升。',
+							showCancel:false,
+						    success: function (res) {
+						        if (res.confirm) {
+						            
+									uni.navigateBack({
+										delta:1
+									})
+						         
+						        } else if (res.cancel) {
+						            console.log('用户点击取消');
+						        }
+						    }
+						});
+						
 					} else {
 						uni.setStorageSync('canClick', true);
 						self.$Utils.showToast(data.msg, 'none', 1000)

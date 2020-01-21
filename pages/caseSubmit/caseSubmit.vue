@@ -29,15 +29,17 @@
 					<input type="number" v-model="submitData.phone"  placeholder="请输入手机号码" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')" >
 				</view>
 			</view>
-			<view class="textt">您提交的案件，律师将在24小时之内给您解答，请在法律咨询中查看，如您需要紧急处理，请进入在线咨询页面，与律师及时沟通。</view>
+			<view class="textt">
+				您提交的法律事务，我们将在48小时之内为您解答，请在”我的咨询“中查看。如需紧急处理，请点击”首页“-”会员专线“
+			</view>
 			<view class="submitbtn">
-				<button type="submit"  @click="Utils.stopMultiClick(submit)">立即发布</button>
+				<button type="submit"  @click="Utils.stopMultiClick(submit)">立即提交</button>
 			</view>
 		</form>
 	</view>
 
 		<!--底部tab键-->
-		<view class="navbar">
+		<view class="navbar" v-if="showNav">
 			<view class="navbar_item" @click="Router.redirectTo({route:{path:'/pages/index/index'}})">
 				<view class="nav_img">
 					<image src="../../static/images/nabar1.png" />
@@ -48,8 +50,20 @@
 				<view class="nav_img">
 					<image src="../../static/images/nabar2-a.png" />
 				</view>
-				<view class="text this-text">案件提交</view>
+				<view class="text this-text">免费咨询</view>
 			</view>
+			<button class="navbar_item" v-if="userInfoData.order&&userInfoData.order.length>0" open-type="contact" style="outline: none;line-height: 1.4;overflow: initial;background: #fff;border: none;">
+				<view class="nav_img">
+					<image src="../../static/images/nabar4.png" />
+				</view>
+				<view class="text">会员专线</view>
+			</button>
+			<button class="navbar_item" style="outline: none;line-height: 1.4;overflow: initial;background: #fff;border: none;"  @click="showToast" v-if="userInfoData.order&&userInfoData.order.length==0">
+				<view class="nav_img">
+					<image src="../../static/images/nabar4.png" />
+				</view>
+				<view class="text">会员专线</view>
+			</button>
 			<view class="navbar_item" @click="Router.redirectTo({route:{path:'/pages/user/user'}})">
 				<view class="nav_img">
 					<image src="../../static/images/nabar3.png" />
@@ -75,14 +89,53 @@
 					phone: '',
 					type:2
 				},
-				typeData:[]
+				typeData:[],
+				userInfoData:{},
+				showNav:false
 			}
 		},
 		onLoad() {
 			const self = this;
-			self.$Utils.loadAll(['getMainData'], self);
+			self.$Utils.loadAll(['getMainData','getUserInfoData'], self);
 		},
 		methods: {
+			
+			showToast(){
+				const self = this;
+				self.$Utils.showToast('您还不是会员', 'none')
+			},
+			
+			getUserInfoData() {
+				const self = this;
+				console.log('852369')
+				var now = Date.parse(new Date())/1000;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.getAfter = {
+					order:{
+						tableName:'Order',
+						middleKey:'user_no',
+						key:'user_no',
+						searchItem:{
+							status:1,
+							invalid_time:['>',now],
+							pay_status: 1,
+							type:2
+						},
+						condition:'='
+					}
+				};
+				const callback = (res) => {
+					if (res.solely_code == 100000 && res.info.data[0]) {
+						self.userInfoData = res.info.data[0];
+						self.showNav = true
+					} else {
+						self.$Utils.showToast(res.msg, 'none')
+					};
+					self.$Utils.finishFunc('getUserInfoData');		
+				};
+				self.$apis.userInfoGet(postData, callback);
+			},
 			
 			changeType(e){
 				const self = this;
@@ -193,5 +246,7 @@
 <style>
 	@import "../../assets/style/common.css";
 	@import "../../assets/style/user.css";
-
+	button::after{
+		border:none
+	}
 </style> 

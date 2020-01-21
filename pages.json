@@ -3,14 +3,14 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "澳秦法律",//设置页面标题文字
+				"navigationBarTitleText": "小法宝",//设置页面标题文字
 				"onReachBottomDistance":100
 			}
 		},
 		{
 			"path": "pages/serviceList/serviceList",
 			"style": {
-				"navigationBarTitleText": "特色服务",//设置页面标题文字
+				"navigationBarTitleText": "法律服务",//设置页面标题文字
 				"onReachBottomDistance":100
 			}
 		},
@@ -31,7 +31,7 @@
 		{
 			"path": "pages/caseSubmit/caseSubmit",
 			"style": {
-				"navigationBarTitleText": "案例提交",//设置页面标题文字
+				"navigationBarTitleText": "法律咨询",//设置页面标题文字
 				"onReachBottomDistance":100
 			}
 		},
@@ -59,14 +59,14 @@
 		{
 			"path": "pages/generalAgent/generalAgent",
 			"style": {
-				"navigationBarTitleText": "普通代理",
+				"navigationBarTitleText": "法律顾问",
 				"onReachBottomDistance":100
 			}
 		},
 		{
 			"path": "pages/companyProfile/companyProfile",
 			"style": {
-				"navigationBarTitleText": "公司简介",
+				"navigationBarTitleText": "合同范本",
 				"onReachBottomDistance":100
 			}
 		},
@@ -80,7 +80,7 @@
 		{
 			"path": "pages/lawyerList/lawyerList",
 			"style": {
-				"navigationBarTitleText": "律师",
+				"navigationBarTitleText": "合作律师",
 				"onReachBottomDistance":100
 			}
 		},
@@ -185,7 +185,7 @@
 		{
 			"path": "pages/informationDetails/informationDetails",
 			"style": {
-				"navigationBarTitleText": "资讯详情",
+				"navigationBarTitleText": "详情",
 				"onReachBottomDistance":100
 			}
 		},

@@ -11,31 +11,33 @@
 				<view class="info-right">
 					<view class="name">{{mainData.title}}<view class="lable">{{mainData.passage1}}</view></view>
 					<view class="two" style="margin-top: 40rpx;padding-right: 0;">
-						<image class="icon" src="../../static/images/lvshi-icon2.png" ></image>
-						执业{{mainData.small_title}}年
+						<!-- <image class="icon" src="../../static/images/lvshi-icon2.png" ></image>
+						执业{{mainData.small_title}}年 -->
+						
 						<view class="flexRowBetween starClass" style="margin-left: 10rpx;">
 							<view class="starBox">
-								<!-- <image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon12.png" mode=""></image>
-								<image src="../../static/images/home-icon13.png" mode=""></image>
-								<image src="../../static/images/home-icon11.png" mode=""></image> -->
+								<image v-for="c_item in stars" :src="mainData.score/2 > c_item ?(mainData.score/2-c_item == 0.5?halfSrc:selectedSrc) : normalSrc" mode="">
+								
+								</image>
+							</view>
+							<view>{{mainData.score}}分</view>
+							<!-- <view class="starBox">
 								<image v-for="item in stars" :src="averageScore > item ?(averageScore-item == 0.5?halfSrc:selectedSrc) : normalSrc" mode="">
 
 								</image>
 							</view>
 							<view v-if="messageData.length>0">{{averageScore*2?averageScore*2:'0'}}分</view>
-							<view v-if="messageData.length==0">暂无评分</view>
+							<view v-if="messageData.length==0">暂无评分</view> -->
 						</view>
 					</view>
 					<view class="three" style="margin-top: 40rpx;">
-						<block v-for="child in mainData.keywords">
+						<block v-for="child in mainData.keywords" :key="index">
 							<view class="info-item">{{child}}</view>
 						</block>
 					</view>
 				</view>
 				<view class="rr_car" @click="Router.navigateTo({route:{path:'/pages/lawyerCard/lawyerCard?id='+mainData.id}})">
-					<image src="../../static/images/lawyer%20details-icon1.png" mode=""></image>
+					<image src="../../static/images/lawyer-details-icon1.png" mode=""></image>
 					<view>名片</view>
 				</view>
 			</view>

@@ -80,7 +80,7 @@
 		</view>
 
 		<!--底部tab键-->
-		<view class="navbar">
+		<view class="navbar" v-if="showNav">
 			<view class="navbar_item" @click="Router.redirectTo({route:{path:'/pages/index/index'}})">
 				<view class="nav_img">
 					<image src="../../static/images/nabar1.png" />
@@ -91,8 +91,20 @@
 				<view class="nav_img">
 					<image src="../../static/images/nabar2.png" />
 				</view>
-				<view class="text">案件提交</view>
+				<view class="text">免费咨询</view>
 			</view>
+			<button class="navbar_item" v-if="mainData.order&&mainData.order.length>0" open-type="contact" style="outline: none;line-height: 1.4;overflow: initial;background: #fff;border: none;">
+				<view class="nav_img">
+					<image src="../../static/images/nabar4.png" />
+				</view>
+				<view class="text">会员专线</view>
+			</button>
+			<button class="navbar_item"  @click="showToast" v-if="mainData.order&&mainData.order.length==0" style="outline: none;line-height: 1.4;overflow: initial;background: #fff;border: none;">
+				<view class="nav_img">
+					<image src="../../static/images/nabar4.png" />
+				</view>
+				<view class="text">会员专线</view>
+			</button>
 			<view class="navbar_item" @click="Router.redirectTo({route:{path:'/pages/user/user'}})">
 				<view class="nav_img">
 					<image src="../../static/images/nabar3-a.png" />
@@ -110,7 +122,8 @@
 		data() {
 			return {
 				Router:this.$Router,
-				mainData:{}
+				mainData:{},
+				showNav:false
 			}
 		},
 		
@@ -120,6 +133,11 @@
 		},
 		
 		methods: {
+			
+			showToast(){
+				const self = this;
+				self.$Utils.showToast('您还不是会员', 'none')
+			},
 
 			getMainData() {
 				const self = this;
@@ -144,6 +162,7 @@
 				const callback = (res) => {
 					if (res.solely_code == 100000 && res.info.data[0]) {
 						self.mainData = res.info.data[0];
+						self.showNav = true
 					} else {
 						self.$Utils.showToast(res.msg, 'none')
 					};
@@ -159,6 +178,8 @@
 <style>
 	@import "../../assets/style/common.css";
 	@import "../../assets/style/user.css";
-	
+	button::after{
+		border:none
+	}
 
 </style>

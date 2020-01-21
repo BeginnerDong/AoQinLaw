@@ -15,7 +15,7 @@
 						<input type="number" v-model="submitData.phone" placeholder="请输入手机号码" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')" >
 					</view>
 				</view>
-				<view class="eidt-line">
+				<view class="eidt-line" v-if="!isRegister">
 					<view class="ll"><text class="red">* </text>验证码:</view>
 					<view class="rr" style="width: 45%;">
 						<input type="number" v-model="submitData.code" placeholder="请输入验证码" onkeyup="this.value=this.value.replace(/\D/g,'')">
@@ -33,10 +33,10 @@
 						<input type="number" v-model="submitData.passage1" placeholder="请输入推荐人的手机号码(选填)" maxlength="11" onkeyup="this.value=this.value.replace(/\D/g,'')" >
 					</view>
 				</view>
-				<view class="submitbtn" style="margin-top: 300rpx;">
+				<view class="submitbtn" style="margin-top: 300rpx;" v-if="!isRegister">
 					<button type="submit" open-type="getUserInfo"  @getuserinfo="Utils.stopMultiClick(submit)" style="margin-bottom: 30rpx;">确定</button>
 				</view>
-				<view class="textt" style="padding: 0px 15% 50px 15%;">首次注册时请写推荐人手机号，您的首次消费将给您的推荐人进行返佣</view>
+				<view v-if="!isRegister" class="textt" style="padding: 0px 15% 50px 15%;">首次注册时请写推荐人手机号，您的首次消费将给您的推荐人进行返佣</view>
 			</form>
 		</view>
 
@@ -59,7 +59,7 @@
 				currentTime:61,
 				text:'获取验证码',
 				hasSend:false,
-				isRegister:false
+				isRegister:true
 			}
 		},
 		onLoad() {
@@ -83,8 +83,8 @@
 						self.submitData.name = res.info.data[0].name,
 						self.submitData.phone = res.info.data[0].phone,
 						self.submitData.passage1 = res.info.data[0].passage1
-						if(self.submitData.phone!=''){
-							self.isRegister = true
+						if(self.submitData.passage1==''){
+							self.isRegister = false
 						}
 					};
 					self.$Utils.finishFunc('getMainData');		
@@ -105,7 +105,12 @@
 					if (phone.trim().length != 11 || !/^1[3|4|5|6|7|8|9]\d{9}$/.test(phone)) {
 						uni.setStorageSync('canClick', true);
 						self.$Utils.showToast('手机格式不正确', 'none')			
-					} else {					
+					} else {
+						if(self.submitData.phone==self.submitData.passage1){
+							uni.setStorageSync('canClick', true);
+							self.$Utils.showToast('禁止设置自己为上级', 'none');
+							return
+						};
 						const callback = (user, res) => {
 							self.userInfoUpdate();
 						};
@@ -177,9 +182,9 @@
 					name:self.submitData.name,
 					passage1:self.submitData.passage1
 				};
-				if(self.isRegister){
+				/* if(self.isRegister){
 					delete postData.data.phone
-				};
+				}; */
 				postData.smsAuth = {
 					phone:self.submitData.phone,						
 					code:self.submitData.code					,

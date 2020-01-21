@@ -6,6 +6,7 @@
 				<view class="left">{{item.description}}</view>
 				<view class="right">{{item.create_time}}</view>
 			</view>
+			<view v-if="item.passage1!=''" class="info" style="color: #0066CC;padding-top: 20rpx;">律师回复：<span style="color: #000;">{{item.passage1}}</span></view>
 		</view>
 		
 
@@ -18,12 +19,18 @@
 			return {
 				Router:this.$Router,
 				mainData:[],
+				paginate:{
+					count: 0,
+					currentPage: 1,
+					is_page: true,
+					pagesize: 10
+				}
 			}
 		},
 		
 		onLoad() {
 			const self = this;
-			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			//self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
 			self.$Utils.loadAll(['getMainData'], self);
 		},
 		
@@ -46,7 +53,7 @@
 						count: 0,
 						currentPage: 1,
 						is_page: true,
-						pagesize: 5
+						pagesize: 10
 					}
 				};
 				const postData = {};
@@ -55,6 +62,7 @@
 				postData.searchItem = {
 					thirdapp_id:2,
 					type:2,
+					user_no:uni.getStorageSync('user_info').user_no
 				};
 				const callback = (res) => {
 					if (res.info.data.length > 0) {

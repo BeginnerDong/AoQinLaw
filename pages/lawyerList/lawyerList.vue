@@ -3,23 +3,30 @@
 
 		<!-- 律师列表 -->
 		<view class="lawyerList mglr4">
-			<view class="info"  v-for="(item,index) in mainData" :key="index" @click="Router.navigateTo({route:{path:'/pages/lawyerDetail/lawyerDetail?id='+item.id}})">
+			<view class="info"   v-for="(item,index) in mainData" :key="index" :data-id="item.id"
+			@click="Router.navigateTo({route:{path:'/pages/lawyerDetail/lawyerDetail?id='+$event.currentTarget.dataset.id}})">
 				<view class="info-left">
 					<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
 				</view>
 				<view class="info-right">
 					<view class="name">{{item.title}}<view class="lable">{{item.passage1}}</view></view>
 					<view class="two">
-						<image class="icon" src="../../static/images/lvshi-icon2.png" ></image>
-						执业{{item.small_title}}年
+						<!-- <image class="icon" src="../../static/images/lvshi-icon2.png" ></image>
+						执业{{item.small_title}}年 -->
 						<view class="flexRowBetween starClass" style="margin-left: 10rpx;">
 							<view class="starBox">
+								<image v-for="c_item in stars" :src="item.score/2 > c_item ?(item.score/2-c_item == 0.5?halfSrc:selectedSrc) : normalSrc" mode="">
+								
+								</image>
+							</view>
+							<view>{{item.score}}分</view>
+							<!-- <view class="starBox">
 								<image v-for="c_item in stars" :src="item.averageScore > c_item ?(item.averageScore-c_item == 0.5?halfSrc:selectedSrc) : normalSrc" mode="">
 								
 								</image>
 							</view>
 							<view v-if="item.averageScore>0">{{item.averageScore*2}}分</view>
-							<view v-if="item.averageScore==0">暂无评分</view>
+							<view v-if="item.averageScore==0">暂无评分</view> -->
 						</view>
 						<img class="arrow" src="../../static/images/arrow-icon1.png" alt="">
 					</view>

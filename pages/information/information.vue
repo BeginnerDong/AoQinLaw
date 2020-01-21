@@ -1,8 +1,8 @@
 <template>
 	<view>
 		<view class="newslisbox">
-			<view class="newslis" v-for="(item,index) in mainData" :key="index"  >
-				<view class="twoCt flexRowBetween" @click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails?id='+item.id}})">
+			<view class="newslis" v-for="(item,index) in mainData" :key="index"  :data-id="item.id">
+				<view class="twoCt flexRowBetween" @click="Router.navigateTo({route:{path:'/pages/informationDetails/informationDetails?id='+$event.currentTarget.dataset.id}})">
 					<view class="leftbox">
 						<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''"></image>
 					</view>
@@ -10,7 +10,7 @@
 						<view class="title avoidOverflow2">{{item.title}}</view>
 						<view class="lable flexRowBetween">
 							<view>{{item.description}}</view>
-							<view class="time">{{item.create_time}}</view>
+							<!-- <view class="time">{{item.create_time}}</view> -->
 						</view>
 					</view>
 				</view>
@@ -27,13 +27,19 @@
 		data() {
 			return {
 				Router:this.$Router,
-				mainData:[]
+				mainData:[],
+				paginate:{
+					count: 0,
+					currentPage: 1,
+					is_page: true,
+					pagesize: 10
+				}
 			}
 		},
 		
 		onLoad() {
 			const self = this;
-			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			//self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
 			self.$Utils.loadAll(['getMainData'], self);
 		},
 		
@@ -53,6 +59,7 @@
 			getMainData() {
 				const self = this;
 				const postData = {};
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
 				postData.searchItem = {
 					thirdapp_id:2
 				};

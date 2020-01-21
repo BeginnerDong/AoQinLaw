@@ -2,7 +2,7 @@
 	<view class="swiper-box">
 		<swiper class="swiper" :indicator-dots="false" :autoplay="true" :interval="3000" :duration="500" :circular="true"
 		 @change="change">
-			<swiper-item v-for="(item,index) in list" :key="index" @click="item.src?webSelf.$Router.redirectTo({route:{path:item.src}}):''">
+			<swiper-item v-for="(item,index) in list" :key="index" @click="item.src?Router.redirectTo({route:{path:item.src}}):''">
 				<view class="swiper-item">
 					<image class="swiper-item" :src="item.url?item.url:''" mode=""></image>
 				</view>
@@ -23,7 +23,8 @@
 		data() {
 			return {
 				currIndex: 0,
-				webSelf:this
+				webSelf:this,
+				Router:this.$Router
 			};
 		},
 		methods: {

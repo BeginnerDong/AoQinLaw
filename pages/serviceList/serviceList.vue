@@ -3,12 +3,12 @@
 
 		<!-- 特色服务 -->
 		<view class="proLis flexRowBetween">
-			<view class="item-lis" v-for="(item,index) in mainData" :key="index" 
-			@click="Router.navigateTo({route:{path:'/pages/serviceDetails/serviceDetails?id='+item.id}})">
-				<image class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" alt="" />
+			<view class="item-lis" v-for="(item,index) in mainData" :key="index" :data-id="item.id"
+			@click="Router.navigateTo({route:{path:'/pages/serviceDetails/serviceDetails?id='+$event.currentTarget.dataset.id}})">
+				<image style="height: 275rpx;" class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" alt="" />
 				<view class="tit avoidOverflow">{{item.title}}</view>
-				<view class="price">{{item.price}}</view>
-				<view class="freeVip">会员免费</view>
+				<!-- <view class="price">{{item.price}}</view>
+				<view class="freeVip">会员免费</view> -->
 			</view>
 		</view>
 		<!-- 特色服务 end -->
@@ -24,12 +24,17 @@
 				Router:this.$Router,
 				
 				mainData:[],
-				
+				paginate:{
+					count: 0,
+					currentPage: 1,
+					is_page: true,
+					pagesize: 10
+				}
 			}
 		},
 		onLoad() {
 			const self = this;
-			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.paginate = self.$Utils.cloneForm(self.paginate);
 			self.$Utils.loadAll(['getMainData'], self);
 		},
 		
@@ -53,7 +58,7 @@
 						count: 0,
 						currentPage: 1,
 						is_page: true,
-						pagesize: 5
+						pagesize: 10
 					}
 				};
 				const postData = {};
@@ -61,6 +66,9 @@
 				postData.searchItem = {
 					thirdapp_id:2,
 					type:1,
+				};
+				postData.order = {
+					listorder:'desc'
 				};
 				const callback = (res) => {
 					if (res.info.data.length > 0) {

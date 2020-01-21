@@ -14,7 +14,7 @@
 		
 		<view class="teamBox1" v-if="num==1">
 			<view class="item flexRowBetween" v-for="(item,index) in rewardData" :key="index">
-				<view class="left flexRowBetween" style="width: 50%;">
+				<view class="left flexRowBetween">
 					<view class="photo">
 						<image :src="item.user.headImgUrl"></image>
 					</view>
@@ -52,43 +52,7 @@
 				num:1,
 				rewardData:[],
 				teamData:[],
-				rewardData1:[
-					{
-						photoUrl:"../../static/images/tean-img.png",
-						name:"昵称昵称昵称",
-						time:"2019.08.27",
-						price:"+23"
-					},
-					{
-						photoUrl:"../../static/images/tean-img.png",
-						name:"昵称昵称昵称",
-						time:"2019.08.27",
-						price:"+23"
-					},
-					{
-						photoUrl:"../../static/images/tean-img.png",
-						name:"昵称昵称昵称",
-						time:"2019.08.27",
-						price:"+23"
-					}
-				],
-				memberDta:[
-					{
-						photoUrl:"../../static/images/tean-img.png",
-						name:"昵称昵称昵称",
-						time:"2019.08.27"
-					},
-					{
-						photoUrl:"../../static/images/tean-img.png",
-						name:"昵称昵称昵称",
-						time:"2019.08.27"
-					},
-					{
-						photoUrl:"../../static/images/tean-img.png",
-						name:"昵称昵称昵称",
-						time:"2019.08.27"
-					}
-				]
+				
 			}
 		},
 		onLoad() {
@@ -178,7 +142,8 @@
 				postData.paginate = self.$Utils.cloneForm(self.paginate);
 				postData.tokenFuncName = 'getProjectToken';
 				postData.searchItem = {
-					type:2
+					type:2,
+					status:['in',[0,1,-1]]
 				};
 				postData.getAfter = {
 					user:{
@@ -224,7 +189,7 @@
 	.teamBox1 .item .photo image{ width: 100%; height: 100%; border-radius: 50%;}
 	.teamBox1 .item .cont{
 		margin-left: 20rpx;
-		width: 350rpx;
+		
 		font-size: 28rpx;
 	}
 	.teamBox1 .item .cont .data{

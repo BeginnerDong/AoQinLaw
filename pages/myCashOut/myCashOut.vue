@@ -88,21 +88,32 @@
 					data: {
 						count: -self.submitData.count,
 						trade_info: '提现',
-						status: 1,
+						status: 0,
 						type: 2,					
-						user_no: wx.getStorageSync('user_info').user_no
+						user_no: wx.getStorageSync('user_info').user_no,
+						relation_user:wx.getStorageSync('user_info').user_no
 					}
 				};
 				postData.tokenFuncName = 'getProjectToken';	
 				const callback = (res) => {
 					uni.setStorageSync('canClick', true);
 					if (res.solely_code == 100000) {
-						self.$Utils.showToast('申请成功', 'none');
-						setTimeout(function() {
-							uni.navigateBack({
-								delta: 1
-							})
-						}, 1000);
+						uni.showModal({
+						    title: '申请成功',
+						    content: '您的提现申请已提交，佣金将在3-5个工作日到账，请注意查收。',
+							showCancel:false,
+						    success: function (res) {
+						        if (res.confirm) {
+						            
+									uni.navigateBack({
+										delta:1
+									})
+						         
+						        } else if (res.cancel) {
+						            console.log('用户点击取消');
+						        }
+						    }
+						});
 					} else {
 						self.$Utils.showToast(res.msg, 'none');
 					}

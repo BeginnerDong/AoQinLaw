@@ -1,7 +1,8 @@
 <template>
 	<view class="myCace pdlr4">
 		<view class="item" v-for="item in mainData">
-			<view  @click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail?id='+item.id}})">
+			<view   :data-id = "item.id"
+			@click="Router.navigateTo({route:{path:'/pages/myCaseDetail/myCaseDetail?id='+$event.currentTarget.dataset.id}})">
 				<view class="avoidOverflow">{{item.products[0].snap_product.product.title}}</view>
 				<view class="tag ok" v-if="item.transport_status==2">已解决</view>
 				<view class="tag ing" v-if="item.transport_status==1">解决中</view>
@@ -13,7 +14,7 @@
 				<view class="info">{{item.description}}</view>
 			</view>
 			<view style="display: flex; justify-content: flex-end;padding-top: 20rpx;" v-if="item.products[0].isremark==0&&item.transport_status==2">
-				<view class="plBtn" @click="Router.navigateTo({route:{path:'/pages/myCasePjDetail/myCasePjDetail?id='+item.id}})">评论服务</view>
+				<view class="plBtn" :data-id="item.id" @click="Router.navigateTo({route:{path:'/pages/myCasePjDetail/myCasePjDetail?id='+$event.currentTarget.dataset.id}})">评论服务</view>
 			</view>
 		</view>
 		

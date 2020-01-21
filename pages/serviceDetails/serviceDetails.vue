@@ -3,7 +3,7 @@
 
 		<view  class="seviseDetalTop">
 			<img class="topImg" style="width:100%; height: 360rpx;" :src="mainData.bannerImg&&mainData.bannerImg[0]?mainData.bannerImg[0].url:''" alt="">
-			<view class="freeVip" style="right: 0; left: auto; border-radius: 30rpx 0 0 30rpx;">会员免费</view>
+			<!-- <view class="freeVip" style="right: 0; left: auto; border-radius: 30rpx 0 0 30rpx;">会员免费</view> -->
 			<view class="pdlr4">
 				<view class="tit">{{mainData.title}}</view>
 				<view class="text2">{{mainData.description}}</view>
@@ -23,7 +23,7 @@
 				<img @click="selectProduct(index)" class="icon" :src="item.select?'../../static/images/details-icon1.png':'../../static/images/details-icon2.png'" alt="">
 			</view>
 			
-			<view class="Detai_BfixBox">
+			<view class="Detai_BfixBox" style="background: #fff;">
 				总金额：
 				<span class="price" style="font-size: 30rpx;">{{price}}</span> 
 				<view class="Rbtn" @click="goBuy">立即下单</view>

@@ -5,7 +5,7 @@
 				<view class="title avoidOverflow2">{{mainData.title}}</view>
 				<view class="lable flexRowBetween">
 					<view>{{mainData.description}}</view>
-					<view class="time">{{mainData.create_time}}</view>
+					<!-- <view class="time">{{mainData.create_time}}</view> -->
 				</view>
 			</view>
 		</view>
@@ -35,7 +35,40 @@
 			console.log(wxParse)
 			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
+		onShareAppMessage(res){
+		  const self = this;
+		    return {
+		      title: self.mainData.title,
+		      path: 'pages/informationDetails/informationDetails?id='+self.id,
+		      success: function (res){
+		        console.log(res);
+		        console.log(parentNo)
+		        if(res.errMsg == 'shareAppMessage:ok'){
+		          console.log('分享成功')
+		          if (self.data.shareBtn){
+		            if(res.hasOwnProperty('shareTickets')){
+		            console.log(res.shareTickets[0]);
+		              self.data.isshare = 1;
+		            }else{
+		              self.data.isshare = 0;
+		            }
+		          }
+		        }else{
+		          wx.showToast({
+		            title: '分享失败',
+		          })
+		          self.data.isshare = 0;
+		        }
+		      },
+		      fail: function(res) {
+		        console.log(res)
+		      }
+		    }
+		},
 		methods: {
+			
+			
 			
 			getMainData() {
 				const self = this;

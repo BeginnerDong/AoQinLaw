@@ -32,12 +32,17 @@
 					<input type="text" value="" placeholder="请输入姓名" placeholder-style="color:#999" v-model="submitData.name"/>
 				</view>
 			</view>
-
+			<view class="purchTitle flexRowBetween pdlr4" style="border-bottom:2rpx solid #E7E7E7 ;">
+				<view class="tit">电话</view>
+				<view class="rr">
+					<input type="text" value="" placeholder="请输入电话" placeholder-style="color:#999" v-model="submitData.phone"/>
+				</view>
+			</view>
 			<view class="purchTitle flexRowBetween pdlr4">
-				<view class="tit">问题详情</view>
+				<view class="tit">案件经过</view>
 			</view>
 			<view class="pdlr4">
-				<textarea value="" placeholder="请输入您想要的问题以便律师提前准备" placeholder-style="color:#999;"  v-model="submitData.description"/>
+				<textarea value="" placeholder="请在此输入...." placeholder-style="color:#999;"  v-model="submitData.description"/>
 				</view>
 			<view class="Detai_BfixBox">
 				总金额：
@@ -63,7 +68,8 @@
 				mainData:[],
 				submitData:{
 					name:'',
-					description:''
+					description:'',
+					phone:''
 				}
 			}
 		},
@@ -178,6 +184,7 @@
 						data: {
 							passage1: 'user',
 							name: self.submitData.name,
+							phone:self.submitData.phone,
 							description: self.submitData.description
 						}
 					};

@@ -38,7 +38,7 @@
 				</view>
 				<view class="four flexRowBetween ">
 					<view class="tit">{{item.label&&item.label[0]?item.label[0].title:''}}</view>
-					<view class="time">{{item.create_time}}</view>
+					<!-- <view class="time">{{item.create_time}}</view> -->
 				</view>
 			</view>
 		</view>
@@ -80,6 +80,7 @@
 			getMainData() {
 				const self = this;
 				const postData = {};
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
 				postData.searchItem = {
 					thirdapp_id:2
 				};
